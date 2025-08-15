@@ -1,0 +1,46 @@
+<!--card-->
+<div class="card">
+    <div class="card__preview">
+        <div class="card-lbls">
+            <span class="bestseller">Лидер продаж</span>
+        </div>
+        @@if ( fav === true) {
+            <button class="js-fav card__fav active"><svg><use xlink:href="img/icons/sprite.svg#fav"></use></svg></button>
+        }
+        @@if ( fav === false) {
+            <button class="js-fav card__fav"><svg><use xlink:href="img/icons/sprite.svg#fav"></use></svg></button>
+        }
+        <a href="#" class="media-contain">
+            <img src="img/product-@@nmb.png" alt="@@title">
+        </a>
+        @@if ( bonus === true) {
+            <div class="card__bonus">112</div>
+        }
+    </div>
+    <div class="card__body">
+        <h5 class="h6"><a href="#">@@title</a></h5>
+        <h6>Ботулинический токсин типа А, гемагглютинин комплекс</h6>
+        <div class="card__bottom">
+            @@if ( price === true) {
+                <div class="card__price">
+                    <span class="h5 rub card__totalprice">900</span>
+                    <span class="card__discount">-15%</span>
+                    <del class="card__old-price">1 147</del>
+                </div>
+            }
+            <div class="card__action">
+                @@if ( price === true) {
+                    <button class="btn main-btn card__add" onclick="showLbl(document.querySelector('.js-add-cart'))">Купить</button>
+                    <div class="quantity">
+                        <button class="quantity__btn js-minus" type="button"></button>
+                        <span class="quantity__count"><input type="number" value="1"></span>
+                        <button class="quantity__btn js-plus" type="button"></button>
+                    </div>
+                }
+                @@if ( price === false) {
+                    <button type="button" class="btn main-btn mod-open-btn" data-modal="reg-modal">Узнать цену</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
