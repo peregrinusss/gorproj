@@ -4,8 +4,48 @@
   left: 0;
   width: 100%;
   z-index: 60;
-  transition: all 0.3s;
-  background-color: #0000004D;
+  transition: all 0.6s;
+  background-color: #0000004d;
+  isolation: isolate;
+
+  @include hover {
+    background-color: $black;
+  }
+
+  &.burger-active {
+    & .header__link-request {
+      opacity: 0;
+      visibility: hidden;
+    }
+    & .header__logo-link svg {
+      color: $white !important;
+    }
+  }
+
+  &.white {
+    background-color: transparent;
+
+    & .header__link svg {
+      color: $black;
+    }
+
+    & .header__logo-link svg {
+      color: $black;
+    }
+
+    & .line {
+      stroke: $black;
+    }
+
+    @include hover {
+      background-color: transparent;
+    }
+  }
+
+  &__top {
+    position: relative;
+    z-index: 101;
+  }
 
   &__inner {
     justify-content: space-between;
@@ -27,22 +67,37 @@
       height: 100%;
 
       & svg {
-        color: $black;
+        color: $white;
+        transition: all 0.3s;
       }
     }
   }
 
   &__link {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: all 0.3s;
+    border-radius: 50%;
+    transition: all 0.4s;
+    padding: 8px;
+
+    & svg {
+      color: $white;
+      transition: all 0.4s;
+    }
 
     @include hover {
-      opacity: 0.6;
+      opacity: 0.5;
+    }
+
+    &-burger {
+      padding: 6px;
+      &.active {
+        background-color: $black;
+      }
     }
   }
 
@@ -113,8 +168,14 @@
   visibility: hidden;
   position: absolute;
   width: 100%;
-  height: calc(100vh - 90px);
-  transition: all 0.3s;
+  // padding-top: 78px;
+  height: 100vh;
+  transition: all 0.6s ease-in-out;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 
   &.active {
     opacity: 1;
@@ -125,12 +186,76 @@
     height: 100%;
   }
 
-  &__inner {
-    overflow-y: auto;
+  &__left {
     height: 100%;
 
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__right {
+    padding-top: 78px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 78px);
+  }
+
+  &__nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    &-title {
+      font-size: 18px;
+      font-weight: 400;
+      color: $gray;
+    }
+  }
+  &__links {
+    display: flex;
+    flex-direction: column;
+  }
+  &__link {
+    font-weight: 400;
+    font-size: 35px;
+    line-height: 140%;
+    color: $gray;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+
+    @include hover {
+      color: $black;
+    }
+
+    & span {
+      display: inline-block;
+      transform: translateY(100%);
+      opacity: 0;
+      transition: transform 0.8s ease, opacity 0.8s ease;
+    }
+  }
+
+  &.active .mobile-menu__link span {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  &__inner {
+    overflow-y: auto;
+    border-top: 1px solid #00000014;
+    flex: 1;
+    padding: 40px;
+
     &::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, #679DFF 0%, #FF8AE5 100%);
+      background: linear-gradient(180deg, #679dff 0%, #ff8ae5 100%);
       border-radius: 8px;
       background-clip: padding-box;
     }
@@ -141,64 +266,23 @@
     }
   }
 
-  &__nav {
-    margin-bottom: 140px;
+  &__footer {
+    border-top: 1px solid #00000014;
+    padding: 40px;
+    padding-bottom: 100px;
 
-    & ul {
+    & .link {
       display: flex;
-      flex-direction: column;
-
-      & li {
-        & a {
-          font-size: 18px;
-          font-weight: 400;
-          color: $black;
-          & span {
-            position: relative;
-            top: -5px;
-            left: -3px;
-            font-size: 10px;
-            font-style: italic;
-          }
-        }
-      }
-    }
-
-    & .header__list {
-      padding-top: 20px;
+      transform: translateY(100%);
+      opacity: 0;
+      transition: transform 0.8s ease, opacity 0.8s ease, color 0.3s ease-in-out;
+      transition-delay: 0.2s;
     }
   }
 
-  &__item {
-    border-bottom: 1px solid $bg;
-    padding: 20px 0;
-    margin: 0;
-    font-size: 18px;
-    font-weight: 400;
-    color: $black;
-
-    & span {
-      position: relative;
-      top: -5px;
-      left: -3px;
-      font-size: 10px;
-      font-style: italic;
-    }
-  }
-
-  &__btn {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    background: $white;
-    padding: 24px 10px;
-    box-shadow: 0px -4px 15px 0px #f5f5f5;
-
-    & button {
-      width: 100%;
-    }
+  &.active .mobile-menu__footer .link {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -215,7 +299,7 @@
 .ham {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 400ms;
+  transition: transform 600ms;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -247,12 +331,12 @@
   & .middle {
     stroke-dasharray: 40 142;
     transform-origin: 50%;
-    transition: transform 400ms;
+    transition: transform 600ms;
   }
   & .bottom {
     stroke-dasharray: 40 85;
     transform-origin: 50%;
-    transition: transform 400ms, stroke-dashoffset 400ms;
+    transition: transform 600ms, stroke-dashoffset 600ms;
   }
 }
 .hamRotate.active {
@@ -263,14 +347,8 @@
 }
 .line {
   fill: none;
-  transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
+  transition: stroke-dasharray 600ms, stroke-dashoffset 600ms;
   stroke: $white;
   stroke-width: 5.5;
   stroke-linecap: round;
-}
-
-.phone-tooltip {
-  @media (max-width: $bp4) {
-    display: none;
-  }
 }

@@ -131,27 +131,27 @@ h6,
 }
 .container {
   width: 100%;
-  max-width: 1560px;
-  padding: 0 20px;
+  // max-width: 1560px;
+  padding: 0 50px;
   margin: 0 auto;
   position: relative;
-  @media (max-width: $bp1) {
-    max-width: 1260px;
-  }
-  @media (max-width: $bp2) {
-    max-width: 992px;
-  }
-  @media (max-width: $bp3) {
-    max-width: 761px;
-    padding: 0;
-  }
+  // @media (max-width: $bp1) {
+  //   max-width: 1260px;
+  // }
+  // @media (max-width: $bp2) {
+  //   max-width: 992px;
+  // }
+  // @media (max-width: $bp3) {
+  //   max-width: 761px;
+  //   padding: 0;
+  // }
   @media (max-width: $bp4) {
-    max-width: 630px;
-    padding: 0 10px;
+    // max-width: 630px;
+    padding: 0 16px;
   }
-  @media (max-width: $bp5) {
-    max-width: 480px;
-  }
+  // @media (max-width: $bp5) {
+  //   max-width: 480px;
+  // }
 }
 .fixed-block {
   min-width: 320px;
@@ -298,23 +298,24 @@ h6,
   }
 }
 .link {
+  font-size: 18px;
+  font-weight: 400;
   line-height: 1;
-  display: inline-block;
+  color: $black;
+  display: flex;
+  align-items: center;
+  gap: 16px;
   position: relative;
-  &:after {
-    content: "";
-    display: block;
-    width: 0%;
-    height: 1px;
-    background: $primary;
-    transition: all 0.6s ease;
-    position: absolute;
-    right: 0;
-    bottom: 0;
+  transition: color 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    color: $primary;
   }
-  &:hover:after {
-    width: 100%;
-    left: 0;
+
+  & span {
+    font-size: 18px;
+    font-weight: 500;
   }
 }
 .swiper {
@@ -1109,7 +1110,6 @@ h2 {
     font-size: 40px;
   }
 
-  
   @media (max-width: $bp2) {
     font-size: 32px;
   }
@@ -1193,7 +1193,8 @@ p {
     }
   }
 
-  div, a {
+  div,
+  a {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -1247,7 +1248,6 @@ p {
 }
 
 .text-block {
-
   & a {
     color: $black;
   }
@@ -1347,10 +1347,8 @@ p {
     margin-bottom: 10px;
   }
 
-
   @media (min-width: $bp4) {
     &:hover {
-
       & .btn-back__icon {
         background-color: $black;
 
@@ -1380,7 +1378,7 @@ p {
     & svg {
       color: $black;
     }
-  
+
     @media (max-width: $bp4) {
       width: 40px;
       height: 40px;
@@ -1409,7 +1407,7 @@ p {
     top: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(270deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 14%);
+    background: linear-gradient(270deg, #ffffff 0%, rgba(255, 255, 255, 0) 14%);
     z-index: 10;
 
     @media (max-width: $bp4) {
@@ -1473,53 +1471,53 @@ p {
   display: flex;
   align-items: center;
 }
-.form_radio input[type=radio] {
-	display: none;
+.form_radio input[type="radio"] {
+  display: none;
 }
 .form_radio label {
-	display: inline-block;
-	cursor: pointer;
-	position: relative;
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
   font-size: 16px;
   font-weight: 400;
   line-height: 18px;
-	padding-left: 34px;
-	margin-right: 0;
-	user-select: none;
+  padding-left: 34px;
+  margin-right: 0;
+  user-select: none;
 }
 .form_radio label:before {
-	content: "";
-	display: inline-block;
-	width: 24px;
-	height: 24px;
-	position: absolute;
-	left: 0;
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 0;
   top: 0;
-	bottom: 0;
+  bottom: 0;
   margin: auto 0;
   background: $bg;
   border-radius: 50%;
 }
 
 .form_radio label:after {
-	content: "";
-	display: inline-block;
-	width: 12px;
-	height: 12px;
-	position: absolute;
-	left: 6px;
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  left: 6px;
   top: 0;
-	bottom: 0;
+  bottom: 0;
   margin: auto 0;
-  background: linear-gradient(180deg, #679DFF 0%, #FF8AE5 100%);
+  background: linear-gradient(180deg, #679dff 0%, #ff8ae5 100%);
   border-radius: 50%;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s;
 }
- 
+
 /* Checked */
-.form_radio input[type=radio]:checked + label:after {
+.form_radio input[type="radio"]:checked + label:after {
   opacity: 1;
   visibility: visible;
 }
@@ -1567,10 +1565,12 @@ input[type="search"]::-webkit-search-results-decoration {
 .error-text {
   font-size: 12px;
   font-weight: 400;
-  color: #F4371C;
+  color: #f4371c;
 }
 
-.icon-success, .icon-error, .icon-review {
+.icon-success,
+.icon-error,
+.icon-review {
   flex: 0 0 50px;
   width: 50px;
   height: 50px;
@@ -1600,3 +1600,37 @@ input[type="search"]::-webkit-search-results-decoration {
     }
   }
 }
+
+.animated-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .line-wrapper {
+    display: block;
+    overflow: hidden;
+  }
+
+  .line {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(100%);
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// LENIS SCROLL
+:root {
+  --scene-inset: 50px;
+} /* безопасный отступ от левого края */

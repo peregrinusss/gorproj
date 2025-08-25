@@ -1,3 +1,134 @@
 .intro {
   height: 100vh;
+  position: relative;
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 75%, #000000 100%);
+  }
+
+  &__text {
+    position: absolute;
+    bottom: 36px;
+    left: 50px;
+    z-index: 10;
+
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+    color: $white;
+  }
+
+  & .swiper,
+  & .swiper-wrapper,
+  & .swiper-slide {
+    height: 100%;
+  }
+
+  & .swiper-slide {
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.swiper-pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  z-index: 12;
+  bottom: 36px !important;
+}
+
+/* сама точка */
+.swiper-pagination-bullet.bullet {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.swiper-pagination-bullet-active.bullet {
+  background: #fff; /* активная точка */
+}
+
+.bullet .dot {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+/* SVG-дуга-прогресс без серой подложки */
+.bullet .ring {
+  position: absolute;
+  width: 20px; /* диаметр кольца */
+  height: 20px;
+  top: 0;
+  left: 0;
+  scale: 3;
+  pointer-events: none;
+  transform: rotate(-90deg); /* старт сверху по часовой */
+}
+
+.bullet .progress {
+  fill: none;
+  stroke: #fff; /* цвет дуги */
+  stroke-width: 2.5; /* толщина */
+  stroke-linecap: round; /* ЗАКРУГЛЁННЫЕ КРАЯ */
+  /* длина окружности r=10 => ~62.83 */
+  stroke-dasharray: 62.83;
+  stroke-dashoffset: calc(62.83 * (1 - var(--p, 0)));
+  transition: stroke-dashoffset 0.1s linear, opacity 0.2s ease,
+    transform 0.2s ease;
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+/* показываем дугу только у активной пули */
+.swiper-pagination-bullet-active .progress {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.scroll-scene {
+  position: relative;
+}
+.scene-inner {
+  position: relative;
+  height: 100vh;
+  overflow: hidden; /* чтобы въезжающее не торчало */
+}
+
+/* одна точка центровки — только wrapper */
+.center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* анимируем только внутренние элементы */
+.title,
+.subtitle {
+  will-change: transform, opacity;
+  white-space: nowrap;
+}
+
+.title {
+  font-size: 52px;
+  margin: 0;
+}
+.subtitle {
+  font-size: 18px;
+  opacity: 0;
 }

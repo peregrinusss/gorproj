@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru" class="page">
+  @@include('_head.html', { "title": "Начальная страница" })
+
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: auto;
+      color: #000;
+      /* background: -o-linear-gradient(310deg, #000000, #04523c);
+      background: linear-gradient(140deg, #0c0c0c, #03515a);
+      background-repeat: no-repeat;
+      background-size: 200%;
+      animation: gradient 10s infinite; */
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    li {
+      list-style: none;
+      list-style-type: decimal;
+      font-size: 18px;
+    }
+    .index {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 15px;
+    }
+    h1 {
+      width: fit-content;
+      font-size: 45px;
+      font-weight: 600;
+      line-height: 130%;
+      background-image: linear-gradient(to right, #CF0000, #CF0000);
+      color: transparent;
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+    a {
+      background-image: linear-gradient(
+        to right,
+        #CF0000,
+        #CF0000 50%,
+        #000 50%
+      );
+      background-size: 200% 100%;
+      background-position: -100%;
+      display: inline-block;
+      padding: 5px 0;
+      position: relative;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: all 0.3s ease-in-out;
+    }
+
+    a::before {
+      content: "";
+      background: #CF0000;
+      display: block;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      transition: all 0.3s ease-in-out;
+    }
+    a::after {
+      content: "";
+      background: #ffffff;
+      display: block;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 2px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    a:hover {
+      background-position: 0;
+    }
+
+    a:hover::before {
+      width: 100%;
+    }
+    a:hover::after {
+      width: 0;
+    }
+
+    .disc {
+      display: block;
+      font-size: 16px;
+      margin: 40px 0 50px;
+    }
+
+    .stack {
+      display: flex;
+      column-gap: 20px;
+      row-gap: 5px;
+      flex-wrap: wrap;
+    }
+    .stack span {
+      font-size: 22px;
+      font-weight: 600;
+      color: #817f7f;
+    }
+
+    .flex {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+  </style>
+
+  <body class="page__body">
+    <main class="main">
+      <div class="index">
+        <div class="stack">
+          <span>Html</span>
+          <span>SCSS</span>
+          <span>Js (ES6)</span>
+          <span>Js libraries</span>
+          <span>Gulp</span>
+        </div>
+        <h1>Городской проект</h1>
+        <span class="disc"
+          >Ниже приведены ссылки на страницы проекта. Страницы открываются в новом окне.</span
+        >
+        <ol class="flex flex-col gap-6">
+          <li>
+            <a href="home.html" target="_blank">Главная</a>
+          </li>
+        </ol>
+      </div>
+    </main>
+  </body>
+</html>

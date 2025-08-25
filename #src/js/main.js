@@ -29,15 +29,15 @@ let animSpd = 400; //переменная для скорости анимаци
 const burger = document.querySelector("#burger");
 
 if (burger) {
-  // const subscribeButton = document.querySelector(".header__subscribe"); // Находим кнопку подписки
-  // const mobileLinks = document.querySelector(".header__links-mobile"); // Находим все мобильные ссылки
   const mobileMenu = document.querySelector(".mobile-menu"); // Находим мобильное меню
   const ham = document.querySelector(".ham"); // Находим иконку бургера
+  const header = document.querySelector(".header"); // Находим хедер
 
   burger.addEventListener("click", () => {
     burger.classList.toggle("active");
     mobileMenu.classList.toggle("active");
     ham.classList.toggle("active");
+    header.classList.toggle("burger-active");
 
     if (burger.classList.contains("active")) {
       disableScroll();
@@ -123,22 +123,6 @@ if (menuTriggers.length) {
     // Настраиваем наблюдение за изменением классов
     observer.observe(menu, { attributes: true, attributeFilter: ["class"] });
   });
-}
-
-function initAcc() {
-  // Аккордеон сервиса
-  const serviceAccordion = document.querySelector(".service-accordion");
-  if (serviceAccordion) {
-    new Accordion(serviceAccordion, {
-      onOpen: function (currentElement) {
-        currentElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "nearest",
-        });
-      },
-    });
-  }
 }
 
 // Аккордеон меню
@@ -301,134 +285,87 @@ if (inp) {
   });
 }
 
-const circleText = document.getElementById("circle-text");
-if (circleText) {
-  new CircleType(circleText);
+// intro swiper
+const introSwiper = new Swiper(".intro-swiper", {
+  loop: true,
+  speed: 700,
+  effect: "fade",
+  autoplay: { delay: 8000, disableOnInteraction: false },
+
+  pagination: {
+    el: ".swiper-pagination",
+    clickable: true,
+    // кастомная разметка пули: точка + svg-дуга прогресса
+    renderBullet: (index, className) => `
+      <span class="${className} bullet">
+        <span class="dot"></span>
+        <svg class="ring" viewBox="0 0 24 24" aria-hidden="true">
+          <circle class="progress" cx="12" cy="12" r="10"></circle>
+        </svg>
+      </span>
+    `,
+  },
+
+  observer: true,
+  observeParents: true,
+
+  on: {
+    init() {
+      handleVideos(this);
+      resetBulletProgress(this);
+      startBulletRaf(this);
+    },
+    slideChangeTransitionStart() {
+      handleVideos(this);
+      resetBulletProgress(this);
+      startBulletRaf(this);
+    },
+    autoplayTimeLeft(swiper, time, progress) {
+      // progress 0→1; пишем в CSS-переменную активной пули
+      const active = swiper.pagination?.el?.querySelector(
+        ".swiper-pagination-bullet-active"
+      );
+      if (active)
+        active.style.setProperty("--p", Math.max(0, Math.min(1, progress)));
+    },
+  },
+});
+
+function resetBulletProgress(swiper) {
+  swiper.pagination?.bullets?.forEach((b) => b.style.setProperty("--p", 0));
+  if (swiper._bulletRaf) cancelAnimationFrame(swiper._bulletRaf);
 }
 
-// basic slider
-const basicSliderBlocks = document.querySelectorAll(".basic-slider");
-if (basicSliderBlocks.length > 0) {
-  basicSliderBlocks.forEach((basicSliderBlock) => {
-    let basicSlider = new Swiper(basicSliderBlock.querySelector(".swiper"), {
-      slidesPerView: 1.15,
-      spaceBetween: 10,
-      observer: true,
-      observeParents: true,
-      watchSlidesProgress: true,
-      navigation: {
-        prevEl: basicSliderBlock.querySelector(".nav-btn--prev"),
-        nextEl: basicSliderBlock.querySelector(".nav-btn--next"),
-      },
-      breakpoints: {
-        991.98: {
-          slidesPerView: 3,
-          spaceBetween: 20,
-        },
-        767.98: {
-          slidesPerView: 2,
-          spaceBetween: 20,
-        },
-      },
-      speed: 800,
-    });
-  });
+function startBulletRaf(swiper) {
+  if (swiper._bulletRaf) cancelAnimationFrame(swiper._bulletRaf);
+  const delay =
+    (typeof swiper.params.autoplay === "object"
+      ? swiper.params.autoplay.delay
+      : swiper.params.autoplay) || 5000;
+  const start = performance.now();
+
+  const tick = (now) => {
+    const p = Math.max(0, Math.min(1, (now - start) / delay));
+    const active = swiper.pagination?.el?.querySelector(
+      ".swiper-pagination-bullet-active"
+    );
+    if (active) active.style.setProperty("--p", p);
+    swiper._bulletRaf = requestAnimationFrame(tick);
+  };
+  swiper._bulletRaf = requestAnimationFrame(tick);
 }
 
-// reasons slider
-const reasonsSliderBlock = document.querySelector(".reasons-slider");
-if (reasonsSliderBlock) {
-  let basicSlider = new Swiper(reasonsSliderBlock.querySelector(".swiper"), {
-    slidesPerView: 1.1,
-    centeredSlides: true, // центрируем активный слайд
-    // loop: true,          // делаем слайдер зацикленным
-    effect: "coverflow",
-    coverflowEffect: {
-      rotate: 30,
-      slideShadows: false,
-      depth: 300,
-      scale: 0.9,
-    },
-    spaceBetween: 0,
-    observer: true,
-    observeParents: true,
-    watchSlidesProgress: true,
-    navigation: {
-      prevEl: reasonsSliderBlock.querySelector(".nav-btn--prev"),
-      nextEl: reasonsSliderBlock.querySelector(".nav-btn--next"),
-    },
-    breakpoints: {
-      575.98: {
-        slidesPerView: 1,
-      },
-    },
-    speed: 800,
+function handleVideos(sw) {
+  document.querySelectorAll(".intro__video").forEach((v) => {
+    try {
+      v.pause();
+    } catch (_) {}
   });
-}
-
-// simple slider
-const simpleSliderBlock = document.querySelector(".simple-slider");
-if (simpleSliderBlock) {
-  let basicSlider = new Swiper(simpleSliderBlock.querySelector(".swiper"), {
-    slidesPerView: 1.3,
-    spaceBetween: 10,
-    observer: true,
-    observeParents: true,
-    watchSlidesProgress: true,
-    navigation: {
-      prevEl: simpleSliderBlock.querySelector(".nav-btn--prev"),
-      nextEl: simpleSliderBlock.querySelector(".nav-btn--next"),
-    },
-    breakpoints: {
-      991.98: {
-        // slidesPerView: 3,
-        spaceBetween: 20,
-      },
-      767.98: {
-        // slidesPerView: 2,
-        // spaceBetween: 20,
-      },
-      // 575.98: {
-      //   slidesPerView: 1
-      // }
-    },
-    speed: 800,
-  });
-}
-
-// basic slider 4
-const basicSlider4Block = document.querySelector(".basic-slider-4");
-if (basicSlider4Block) {
-  let basicSlider = new Swiper(basicSlider4Block.querySelector(".swiper"), {
-    slidesPerView: 1.2,
-    spaceBetween: 10,
-    observer: true,
-    observeParents: true,
-    watchSlidesProgress: true,
-    navigation: {
-      prevEl: basicSlider4Block.querySelector(".nav-btn--prev"),
-      nextEl: basicSlider4Block.querySelector(".nav-btn--next"),
-    },
-    breakpoints: {
-      991.98: {
-        slidesPerView: 4,
-        spaceBetween: 20,
-      },
-      767.98: {
-        slidesPerView: 3,
-        spaceBetween: 20,
-      },
-      575.98: {
-        slidesPerView: 2,
-        spaceBetween: 10,
-      },
-      380: {
-        slidesPerView: 2,
-        spaceBetween: 10,
-      },
-    },
-    speed: 800,
-  });
+  const active = sw.slides[sw.activeIndex];
+  const vid = active && active.querySelector(".intro__video");
+  if (!vid) return;
+  const p = vid.play();
+  if (p && typeof p.then === "function") p.catch(() => {});
 }
 
 //swhitch tab
@@ -488,32 +425,6 @@ if (tabsScroll) {
   viewScroll(), window.addEventListener("resize", viewScroll);
 }
 
-const rangeWrap = document.querySelector(".range-wrap");
-
-if (rangeWrap) {
-  rangeWrap.classList.remove("no-js");
-
-  const range = document.querySelector(".range");
-  const output = document.querySelector(".output");
-
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat("ru-RU").format(value) + " ₽";
-  };
-
-  const onRangeInput = () => {
-    const value = range.value;
-    output.textContent = formatCurrency(value);
-
-    const min = range.min;
-    const max = range.max;
-    const valuePercent = `${100 - ((max - value) / (max - min)) * 100}%`;
-    range.style.backgroundSize = `${valuePercent} 100%`;
-  };
-
-  onRangeInput();
-  range.addEventListener("input", onRangeInput);
-}
-
 // input search
 const searchBlock = document.querySelector("#search-block");
 
@@ -536,7 +447,7 @@ if (searchBlock) {
   });
 }
 
-initMap();
+// initMap();
 
 async function initMap() {
   await ymaps3.ready;
@@ -597,64 +508,148 @@ if (scrollBlock) {
   }
 }
 
-// calendar
-// Функция, превращающая объект Date в строку формата YYYY-MM-DD
-function dateToString(date) {
-  const year = date.getFullYear();
-  // Месяц и день приводим к двухзначному формату (01, 02, ... 12)
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-/**
- * initCalendar - инициализирует AirDatepicker на переданном селекторе,
- * делая недоступными определенные даты.
- *
- * @param {string}   selector   Селектор поля ввода (например, '#datepicker')
- * @param {string[]} busyDates  Массив строк дат в формате 'YYYY-MM-DD'
- */
-function initCalendar(selector, busyDates = []) {
-  new AirDatepicker(selector, {
-    onRenderCell({ date, cellType }) {
-      if (cellType === "day") {
-        const dateStr = dateToString(date);
-        // Если дата содержится в списке "занятых" дат - добавляем класс
-        if (busyDates.includes(dateStr)) {
-          return {
-            classes: "not-available",
-          };
-        }
-      }
-    },
-
-    onSelect({ date }) {
-      // Собираем нужный формат даты (например, YYYY-MM-DD)
-      const dateStr = date ? dateToString(date) : "";
-
-      // Записываем выбранную дату в data-value на самом div #datepicker
-      document.querySelector(selector).dataset.value = dateStr;
-    },
-  });
-}
-
-
 function initTabAnchors() {
-  const modalLeft = document.querySelector('.modal-left__result')
+  const modalLeft = document.querySelector(".modal-left__result");
 
   if (modalLeft) {
-    const tabBtns = modalLeft.querySelectorAll('[data-nav]')
+    const tabBtns = modalLeft.querySelectorAll("[data-nav]");
     tabBtns.forEach((btn) => {
-      btn.addEventListener('click', (event) => {
+      btn.addEventListener("click", (event) => {
         console.log(btn);
         const targetId = event.target.getAttribute("data-nav");
         const targetElement = modalLeft.querySelector(targetId);
-    
+
         if (targetElement) {
           event.preventDefault();
           targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-      })
-    })
+      });
+    });
   }
 }
+
+const animTexts = document.querySelectorAll(".animated-text");
+if (animTexts.length) {
+  animTexts.forEach((item) => {
+    const text = item.innerHTML.split("<br>");
+    item.innerHTML = "";
+
+    text.forEach((line, i) => {
+      const wrapper = document.createElement("div");
+      wrapper.classList.add("line-wrapper");
+
+      const span = document.createElement("span");
+      span.classList.add("line");
+      span.style.animationDelay = `${i * 0.3}s`;
+      span.innerHTML = line.trim();
+
+      wrapper.appendChild(span);
+      item.appendChild(wrapper);
+    });
+  });
+}
+
+// LENIS SCROLL
+document.addEventListener("DOMContentLoaded", () => {
+  gsap.registerPlugin(ScrollTrigger);
+
+  const lenis = new Lenis({
+    duration: 1.05,
+    smoothWheel: true,
+    smoothTouch: false,
+  });
+
+  lenis.on("scroll", ScrollTrigger.update);
+
+  // Используем requestAnimationFrame, чтобы избежать дерганья
+  function raf(t) {
+    lenis.raf(t);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
+  document.querySelectorAll(".scroll-scene").forEach((section) => {
+    const title = section.querySelector(".title");
+    const subtitle = section.querySelector(".subtitle");
+    if (!title || !subtitle) return;
+
+    // вспомогалки
+    const insetPx = () =>
+      parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          "--scene-inset"
+        )
+      ) || 16;
+
+    // финальный X для заголовка: ставим левый край на inset
+    const titleTargetX = () => {
+      const ww = window.innerWidth; // ширина окна
+      const w = title.getBoundingClientRect().width; // ширина заголовка при scale=1
+      const s = 0.5; // target scale (0.5 — уменьшаем в два раза)
+      const scaledWidth = w * s; // ширина заголовка после scale
+
+      // Центр (ww/2) + x - (scaledWidth/2) = inset
+      const x = insetPx() + scaledWidth / 2 - ww / 2;
+
+      return x;
+    };
+
+    // стартовые состояния (центр задаёт wrapper .center)
+    gsap.set(title, { x: 0, scale: 1, transformOrigin: "50% 50%" });
+    gsap.set(subtitle, { x: () => window.innerWidth * 0.5, opacity: 0 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: "top top",
+        end: "+=150%",
+        scrub: true,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true, // пересчитать функции при resize/refresh
+      },
+    });
+
+    // Фаза 1: подзаголовок въезжает справа в центр
+    tl.to(subtitle, { x: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 0)
+      // Фаза 2: заголовок уезжает влево до inset и масштабируется, чтобы влез
+      .to(
+        title,
+        {
+          x: titleTargetX, // функция — пересчёт при каждом refresh
+          scale: 0.5,
+          duration: 0.2,
+          ease: "power2.inOut",
+        },
+        0
+      );
+
+    // на очень узких экранах можно чуть «смягчить» увод
+    ScrollTrigger.matchMedia({
+      "(max-width: 480px)": () => {
+        tl.vars.end = "+=130%";
+        ScrollTrigger.refresh();
+      },
+    });
+  });
+
+  // если шрифты грузятся позже — пересчитать размеры
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
+  }
+  window.addEventListener("resize", () => ScrollTrigger.refresh(), {
+    passive: true,
+  });
+
+  // header color change on scroll
+  const header = document.querySelector(".header");
+  const intro = document.querySelector(".intro");
+  if (header && intro) {
+    ScrollTrigger.create({
+      trigger: intro,
+      start: "bottom top",
+      onEnter: () => header.classList.add("white"),
+      onLeaveBack: () => header.classList.remove("white"),
+    });
+  }
+});
