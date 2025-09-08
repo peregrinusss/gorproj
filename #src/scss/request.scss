@@ -1,0 +1,147 @@
+.request {
+  margin-top: 78px;
+  border-top: 1px solid #ebebeb;
+
+  @media (max-width: $bp4) {
+    margin-top: 70px;
+  }
+
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    position: relative;
+
+    @media (max-width: $bp4) {
+      flex-direction: column;
+      gap: 60px;
+      align-items: flex-start;
+    }
+  }
+
+  & .home-contacts__blocks {
+    height: auto;
+    width: 100%;
+  }
+
+  & .home-contacts__inner {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  & .home-contacts__block {
+    &.active {
+      display: block;
+    }
+  }
+
+  & .home-contacts__tabs {
+    align-items: flex-end;
+    height: 40px;
+
+    @media (max-width: $bp4) {
+      gap: 8px;
+    }
+  }
+
+  & .home-contacts__tab {
+    font-size: 24px;
+    line-height: 100%;
+
+    @media (max-width: $bp1) {
+      font-size: 20px;
+    }
+
+    &.active {
+      scale: 1;
+      font-size: 32px;
+
+      @media (max-width: $bp1) {
+        font-size: 28px;
+      }
+
+      @media (max-width: $bp4) {
+        font-size: 24px;
+      }
+    }
+  }
+
+  &__wrapper {
+    box-sizing: content-box;
+    padding: 80px var(--scene-inset) 80px;
+    flex-shrink: 0;
+    width: 480px;
+    height: 100%;
+
+    @media (max-width: $bp1) {
+      padding: 60px 20px 60px var(--scene-inset);
+    }
+
+    @media (max-width: $bp3) {
+      width: 390px;
+    }
+
+    @media (max-width: $bp4) {
+      padding: 40px var(--scene-inset) 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  &__imgs {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+
+    @media (max-width: $bp4) {
+      width: 100%;
+      max-width: 100%;
+      height: 600px;
+    }
+  }
+
+  &__img {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &.active {
+      display: block;
+      opacity: 1;
+    }
+  }
+
+  &-form {
+    & p {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 120%;
+      color: $dark-gray;
+    }
+
+    &__fields {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 40px;
+    }
+
+    & .item-checkbox {
+      margin-top: 20px;
+    }
+
+    & .btn {
+      width: 100%;
+      margin-top: 20px;
+    }
+  }
+}

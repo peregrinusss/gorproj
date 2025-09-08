@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+  @@include('_head.html', { "title": "404" })
+
+  <body>
+    <div class="wrap">
+      <!--header-->
+      @@include('_header.html', { "color": "black" })
+      <!--main-->
+      <main class="main page-404">
+        <div class="page-404__img">
+          <img src="img/404.png" alt="" />
+        </div>
+        <div class="page-404__blur page-404__blur-up"></div>
+        <div class="page-404__blur page-404__blur-down"></div>
+        <div class="page-404__text">
+          <span class="page-404__title">404</span>
+          <span class="page-404__subtitle">Извините, такой страницы нет</span>
+          <a href="#" class="link">
+            <span>[</span>Вернуться на главную<span>]</span>
+          </a>
+        </div>
+      </main>
+    </div>
+    @@include('_js.html')
+  </body>
+</html>

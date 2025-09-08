@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+  @@include('_head.html', { "title": "О бюро" })
+
+  <body>
+    <div class="wrap">
+      <!--header-->
+      @@include('_header.html', { "color": "white" })
+      <!--main-->
+      <main class="main">
+        <div class="section-hat">
+          <div class="container">
+            <div class="section-hat__inner">
+              <div class="section-hat__breadcrumbs">
+                <h2 class="section-hat__link animated-text-page">О бюро</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+        <section class="about-intro">
+          <div class="about-intro__img">
+            <img src="img/about.jpg" alt="">
+          </div>
+        </section>
+      </main>
+      <!--footer-->
+      @@include('_footer.html')
+    </div>
+    @@include('_js.html')
+  </body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+  @@include('_head.html', { "title": "Заявка" })
+
+  <body>
+    <div class="wrap">
+      <!--header-->
+      @@include('_header.html', { "color": "white" })
+      <!--main-->
+      <main class="main">
+        <section class="request">
+          <div class="request__inner">
+            <div class="request__wrapper">
+              <div class="home-contacts__inner switch-block">
+                <div class="home-contacts__tabs">
+                  <div class="home-contacts__tab active" data-nav>
+                    Заказать проект,
+                  </div>
+                  <div class="home-contacts__tab" data-nav>работа в бюро</div>
+                </div>
+                <div class="home-contacts__blocks">
+                  <div class="home-contacts__block active" data-block>
+                    <form class="request-form">
+                      <p>
+                        Оставьте свои данные, и мы свяжемся с вами <br />
+                        в ближайшее время, чтобы обсудить детали проекта
+                      </p>
+                      <div class="request-form__fields">
+                        <input
+                          type="text"
+                          name="form-name-1"
+                          placeholder="Имя"
+                          id="form-name-1"
+                          class="input-text"
+                        />
+                        <input
+                          type="tel"
+                          name="form-phone-1"
+                          placeholder="+7 777 777-77-77"
+                          id="form-phone-1"
+                          class="input-text"
+                        />
+                        <input
+                          type="email"
+                          placeholder="Почта"
+                          name="form-email-1"
+                          id="form-email-1"
+                          class="input-text"
+                        />
+                        <label for="form-file-1" class="item-file">
+                          <input
+                            type="file"
+                            name="form-file-1"
+                            id="form-file-1"
+                            class="form-file"
+                            accept=".zip,.pdf,.doc,.docx"
+                          />
+                          <div class="item-file__body">
+                            <span>Добавить файл ZIP, PDF, DOC</span>
+                            <svg
+                              width="14"
+                              height="16"
+                              viewBox="0 0 14 16"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M13.3769 8.23299C13.3089 8.16193 13.2148 8.11804 13.1112 8.11804C13.0081 8.11804 12.9145 8.16141 12.8464 8.23194L7.33989 13.9573C6.71326 14.6925 5.80485 15.1533 4.79334 15.1533C3.81637 15.1533 2.93599 14.7238 2.31536 14.0357L2.31386 14.0341C1.6472 13.3836 1.23178 12.4604 1.23178 11.4353C1.23178 10.3846 1.66872 9.44045 2.36341 8.78943L2.36642 8.7863L8.37292 2.51649C8.80235 2.02274 9.41997 1.71395 10.1067 1.71395C10.1437 1.71395 10.1812 1.715 10.2178 1.71656H10.2128C10.8574 1.76934 11.4275 2.06558 11.8454 2.51649L11.8459 2.51701C12.2783 2.95433 12.5621 3.54944 12.6117 4.21299L12.6122 4.2224C12.6132 4.24957 12.6137 4.28144 12.6137 4.31383C12.6137 5.03591 12.3189 5.68588 11.8484 6.13992L11.8469 6.14148L6.29935 11.8878C6.02207 12.2749 5.58363 12.5231 5.09014 12.5231C4.70776 12.5231 4.35841 12.3742 4.09314 12.1292L4.09464 12.1307C3.87242 11.8585 3.73729 11.5022 3.73729 11.1129C3.73729 10.5868 3.98453 10.1212 4.36391 9.83545L4.36842 9.83231L8.37292 5.65139C8.44099 5.58034 8.48303 5.48263 8.48303 5.37448C8.48303 5.15817 8.31486 4.98261 8.10766 4.98261C8.00405 4.98261 7.90996 5.0265 7.84189 5.09756L3.84039 9.27534C3.31737 9.70848 2.98503 10.3715 2.98503 11.1155C2.98503 11.718 3.20275 12.2676 3.56111 12.683L3.55911 12.6809C3.95901 13.0686 4.49655 13.3063 5.08714 13.3063C5.78633 13.3063 6.41146 12.973 6.82387 12.4505L6.82688 12.4463L12.3769 6.69688C12.986 6.1023 13.3654 5.25848 13.3654 4.32219C13.3654 4.27099 13.3644 4.21979 13.3619 4.16911V4.17642C13.2998 3.30439 12.935 2.53164 12.3774 1.96422L12.3769 1.9637C11.8329 1.38061 11.0926 0.999194 10.2673 0.935973L10.2563 0.935451C10.2128 0.933361 10.1622 0.931793 10.1112 0.931793C9.21576 0.931793 8.40896 1.32784 7.84339 1.96161L7.84189 1.9637L1.83538 8.23403C1.00606 9.03187 0.488037 10.1709 0.488037 11.4369C0.488037 12.6772 0.985034 13.7959 1.78283 14.5885L1.78433 14.5901C2.55711 15.4057 3.62417 15.9161 4.80586 15.9318H4.80886C6.01807 15.9114 7.10315 15.3706 7.86942 14.5148L7.87192 14.5122L13.3774 8.78787C13.4455 8.71681 13.488 8.61858 13.488 8.51043C13.488 8.40227 13.446 8.30457 13.3784 8.23403L13.3769 8.23299Z"
+                                fill="#9B9B9B"
+                              />
+                            </svg>
+                          </div>
+                        </label>
+                        <div class="file file-preview">
+                          <span class="file__name"></span>
+                          <div class="file__close">
+                            <svg
+                              width="15"
+                              height="15"
+                              viewBox="0 0 15 15"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <rect
+                                x="3.24219"
+                                y="11.4392"
+                                width="12"
+                                height="1.3"
+                                rx="0.65"
+                                transform="rotate(-45 3.24219 11.4392)"
+                                fill="black"
+                              />
+                              <rect
+                                x="4.24219"
+                                y="2.95486"
+                                width="12"
+                                height="1.3"
+                                rx="0.65"
+                                transform="rotate(45 4.24219 2.95486)"
+                                fill="black"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+
+                        <textarea
+                          name="form-message"
+                          id="form-message-1"
+                          placeholder="Ваше сообщение"
+                        ></textarea>
+                        <label class="item-checkbox">
+                          <input type="checkbox" id="form-checkbox-1" />
+                          <span
+                            >Даю согласие на обработку
+                            <a href="#" target="_blank">Персональных данных</a>
+                          </span>
+                        </label>
+                        <button type="submit" class="btn main-btn">
+                          Отправить
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="home-contacts__block" data-block>
+                    <form class="request-form">
+                      <p>
+                        Расскажите о себе и прикрепите портфолио, <br />
+                        мы обязательно рассмотрим ваше резюме
+                      </p>
+                      <div class="request-form__fields">
+                        <input
+                          type="text"
+                          name="form-name-2"
+                          placeholder="Имя"
+                          id="form-name-2"
+                          class="input-text"
+                        />
+                        <input
+                          type="tel"
+                          name="form-phone-2"
+                          placeholder="+7 777 777-77-77"
+                          id="form-phone-2"
+                          class="input-text"
+                        />
+                        <input
+                          type="email"
+                          placeholder="Почта"
+                          name="form-email-2"
+                          id="form-email-2"
+                          class="input-text"
+                        />
+                        <label for="form-file-2" class="item-file">
+                          <input
+                            type="file"
+                            name="form-file-2"
+                            id="form-file-2"
+                            class="form-file"
+                            accept=".zip,.pdf,.doc,.docx"
+                          />
+                          <div class="item-file__body">
+                            <span>Портфолио ZIP, PDF, DOC</span>
+                            <svg
+                              width="14"
+                              height="16"
+                              viewBox="0 0 14 16"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M13.3769 8.23299C13.3089 8.16193 13.2148 8.11804 13.1112 8.11804C13.0081 8.11804 12.9145 8.16141 12.8464 8.23194L7.33989 13.9573C6.71326 14.6925 5.80485 15.1533 4.79334 15.1533C3.81637 15.1533 2.93599 14.7238 2.31536 14.0357L2.31386 14.0341C1.6472 13.3836 1.23178 12.4604 1.23178 11.4353C1.23178 10.3846 1.66872 9.44045 2.36341 8.78943L2.36642 8.7863L8.37292 2.51649C8.80235 2.02274 9.41997 1.71395 10.1067 1.71395C10.1437 1.71395 10.1812 1.715 10.2178 1.71656H10.2128C10.8574 1.76934 11.4275 2.06558 11.8454 2.51649L11.8459 2.51701C12.2783 2.95433 12.5621 3.54944 12.6117 4.21299L12.6122 4.2224C12.6132 4.24957 12.6137 4.28144 12.6137 4.31383C12.6137 5.03591 12.3189 5.68588 11.8484 6.13992L11.8469 6.14148L6.29935 11.8878C6.02207 12.2749 5.58363 12.5231 5.09014 12.5231C4.70776 12.5231 4.35841 12.3742 4.09314 12.1292L4.09464 12.1307C3.87242 11.8585 3.73729 11.5022 3.73729 11.1129C3.73729 10.5868 3.98453 10.1212 4.36391 9.83545L4.36842 9.83231L8.37292 5.65139C8.44099 5.58034 8.48303 5.48263 8.48303 5.37448C8.48303 5.15817 8.31486 4.98261 8.10766 4.98261C8.00405 4.98261 7.90996 5.0265 7.84189 5.09756L3.84039 9.27534C3.31737 9.70848 2.98503 10.3715 2.98503 11.1155C2.98503 11.718 3.20275 12.2676 3.56111 12.683L3.55911 12.6809C3.95901 13.0686 4.49655 13.3063 5.08714 13.3063C5.78633 13.3063 6.41146 12.973 6.82387 12.4505L6.82688 12.4463L12.3769 6.69688C12.986 6.1023 13.3654 5.25848 13.3654 4.32219C13.3654 4.27099 13.3644 4.21979 13.3619 4.16911V4.17642C13.2998 3.30439 12.935 2.53164 12.3774 1.96422L12.3769 1.9637C11.8329 1.38061 11.0926 0.999194 10.2673 0.935973L10.2563 0.935451C10.2128 0.933361 10.1622 0.931793 10.1112 0.931793C9.21576 0.931793 8.40896 1.32784 7.84339 1.96161L7.84189 1.9637L1.83538 8.23403C1.00606 9.03187 0.488037 10.1709 0.488037 11.4369C0.488037 12.6772 0.985034 13.7959 1.78283 14.5885L1.78433 14.5901C2.55711 15.4057 3.62417 15.9161 4.80586 15.9318H4.80886C6.01807 15.9114 7.10315 15.3706 7.86942 14.5148L7.87192 14.5122L13.3774 8.78787C13.4455 8.71681 13.488 8.61858 13.488 8.51043C13.488 8.40227 13.446 8.30457 13.3784 8.23403L13.3769 8.23299Z"
+                                fill="#9B9B9B"
+                              />
+                            </svg>
+                          </div>
+                        </label>
+                        <div class="file file-preview">
+                          <span class="file__name"></span>
+                          <div class="file__close">
+                            <svg
+                              width="15"
+                              height="15"
+                              viewBox="0 0 15 15"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <rect
+                                x="3.24219"
+                                y="11.4392"
+                                width="12"
+                                height="1.3"
+                                rx="0.65"
+                                transform="rotate(-45 3.24219 11.4392)"
+                                fill="black"
+                              />
+                              <rect
+                                x="4.24219"
+                                y="2.95486"
+                                width="12"
+                                height="1.3"
+                                rx="0.65"
+                                transform="rotate(45 4.24219 2.95486)"
+                                fill="black"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+
+                        <textarea
+                          name="form-message"
+                          id="form-message-2"
+                          placeholder="Сопроводительное письмо и/или ссылка на портфолио"
+                        ></textarea>
+                        <label class="item-checkbox">
+                          <input type="checkbox" id="form-checkbox-2" />
+                          <span
+                            >Даю согласие на обработку
+                            <a href="#" target="_blank">Персональных данных</a>
+                          </span>
+                        </label>
+                        <button type="submit" class="btn main-btn">
+                          Отправить
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="request__imgs">
+              <div class="request__img">
+                <img src="img/request-1.jpg" alt="" />
+              </div>
+              <div class="request__img">
+                <img src="img/request-2.jpg" alt="" />
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <!--footer-->
+      @@include('_footer.html') @@include('_modal.html')
+
+      <!-- modal -->
+      @@include('_modal.html')
+    </div>
+    @@include('_js.html')
+  </body>
+</html>

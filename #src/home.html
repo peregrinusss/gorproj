@@ -8,7 +8,88 @@
       @@include('_header.html')
       <!--main-->
       <main class="main">
-        <section class="intro">
+        <div class="loader">
+          <div class="loader__inner">
+            <svg
+              width="208"
+              height="102"
+              viewBox="0 0 208 102"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M0 0V101.39H31.219V31.1042H66.3101V0H0Z" fill="white" />
+              <path
+                d="M66.3101 35.2033H35.2121V101.39H66.3101V35.2033Z"
+                fill="white"
+              />
+              <path
+                d="M141.332 101.39V0H207.522L176.424 25.9202H172.309V54.8544H176.424V25.9202L207.522 0V75.47H172.43V101.39H141.332Z"
+                fill="white"
+              />
+              <path
+                d="M176.424 101.39V79.6896H207.522V101.39H176.424Z"
+                fill="white"
+              />
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M70.5452 0V101.39H136.976V0H70.5452ZM105.757 25.9202V75.47H101.643V25.9202H105.757Z"
+                fill="white"
+              />
+            </svg>
+            <svg
+              width="208"
+              height="102"
+              viewBox="0 0 208 102"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0 101.39V0H66.3101V101.39H35.2121V25.9202H31.219V101.39H0Z"
+                fill="white"
+              />
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M141.09 0.12056V101.39H207.522V0.12056H141.09ZM176.303 26.0408V75.5906H172.188V26.0408H176.303Z"
+                fill="white"
+              />
+              <path
+                d="M70.5452 101.39V0H136.734L105.636 25.9202H101.522V54.8544H105.636V25.9202L136.734 0V75.47H101.643V101.39H70.5452Z"
+                fill="white"
+              />
+              <path
+                d="M105.636 101.39V79.6896H136.734V101.39H105.636Z"
+                fill="white"
+              />
+            </svg>
+          </div>
+        </div>
+        <div class="cookies" id="cookiesBanner">
+          <div class="cookies__inner">
+            <div class="cookies__text">
+              <svg
+                viewBox="0 0 31 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="15.5" cy="16" r="15" stroke="#393939" />
+                <circle cx="7.5" cy="14" r="3" stroke="#393939" />
+                <circle cx="22" cy="9.5" r="2.5" stroke="#393939" />
+                <circle cx="12" cy="25.5" r="2.5" stroke="#393939" />
+                <circle cx="17" cy="16.5" r="1.5" stroke="#393939" />
+                <circle cx="14" cy="6.5" r="1.5" stroke="#393939" />
+                <circle cx="23" cy="21.5" r="1.5" stroke="#393939" />
+              </svg>
+
+              <p>Сайт использует cookies</p>
+            </div>
+            <div class="cookies__btn">
+              <button class="btn main-btn" id="cookiesOk">Ок</button>
+            </div>
+          </div>
+        </div>
+        <section class="intro" data-header="default">
           <div class="intro__bg"></div>
           <div class="swiper intro-swiper">
             <div class="swiper-wrapper">
@@ -72,17 +153,294 @@
             </span>
           </div>
         </section>
-        <section class="scroll-scene">
+        <section class="scene-sevices section-white" data-header="white">
           <div class="scene-inner">
-            <!-- центрируется обёртка -->
             <div class="center center-title">
               <h2 class="title">Услуги и направления</h2>
             </div>
+
             <div class="center center-subtitle">
               <p class="subtitle">
                 Наши приоритетные направления <br />
                 — архитектура и градостроительство
               </p>
+            </div>
+
+            <div class="center services">
+              <ul class="services-list">
+                <li>архитектурное проектирование</li>
+                <li>BIM моделирование</li>
+                <li>авторский надзор</li>
+                <li>проектирование жилых зданий</li>
+                <li>ландшафтная архитектура</li>
+                <li>дизайн общественных интерьеров</li>
+              </ul>
+            </div>
+
+            <div class="do-overlay">
+              <span class="do-word">Делаем</span>
+            </div>
+          </div>
+        </section>
+        <section class="scene-advantages section-black" data-header="black">
+          <div class="mobile-menu" id="advantages-modal">
+            <div class="scroll-y">
+              <div class="advantages-info__block active" data-block>
+                <div class="advantages-info__left">
+                  <div class="advantages-info__img">
+                    <img src="img/advantage-1.jpg" alt="" />
+                  </div>
+                </div>
+                <div class="advantages-info__text">
+                  <div class="advantages-info__title">
+                    <span>
+                      Международный <br />
+                      архитектурный фестиваль 2025
+                    </span>
+                  </div>
+                  <div class="advantages-info__desc">
+                    <span>12.02.2025</span>
+                    <span>Номинация, место, победа</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="scene-inner">
+            <div class="center center-title">
+              <h2 class="title">Награды</h2>
+            </div>
+
+            <div class="advantages switch-block">
+              <div class="advantages__list">
+                <div class="advantages__item active" data-nav>
+                  <img src="img/brand-2.png" alt="" />
+                </div>
+                <div class="advantages__item" data-nav>
+                  <img src="img/brand-2.png" alt="" />
+                </div>
+                <div class="advantages__item" data-nav>
+                  <img src="img/brand-2.png" alt="" />
+                </div>
+                <div class="advantages__item" data-nav>
+                  <img src="img/brand-2.png" alt="" />
+                </div>
+                <div class="advantages__item advantages__item-more">
+                  <div><span>[</span>Еще<span>]</span></div>
+                </div>
+              </div>
+              <div class="advantages-info">
+                <div class="advantages-info__block active" data-block>
+                  <div class="advantages-info__left">
+                    <div class="advantages-info__img">
+                      <img src="img/advantage-1.jpg" alt="" />
+                    </div>
+                  </div>
+                  <div class="advantages-info__text">
+                    <div class="advantages-info__title">
+                      <span>
+                        Международный <br />
+                        архитектурный фестиваль 2025
+                      </span>
+                    </div>
+                    <div class="advantages-info__desc">
+                      <span>12.02.2025</span>
+                      <span>Номинация, место, победа</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="advantages-info__block" data-block>
+                  <div class="advantages-info__left">
+                    <div class="advantages-info__img">
+                      <img src="img/advantage-1.jpg" alt="" />
+                    </div>
+                  </div>
+                  <div class="advantages-info__text">
+                    <div class="advantages-info__title">
+                      <span>Название события 2</span>
+                    </div>
+                    <div class="advantages-info__desc">
+                      <span>12.02.2025</span>
+                      <span>Номинация, место, победа</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="advantages-info__block" data-block>
+                  <div class="advantages-info__left">
+                    <div class="advantages-info__img">
+                      <img src="img/advantage-1.jpg" alt="" />
+                    </div>
+                  </div>
+                  <div class="advantages-info__text">
+                    <div class="advantages-info__title">
+                      <span>Название события 3</span>
+                    </div>
+                    <div class="advantages-info__desc">
+                      <span>12.02.2025</span>
+                      <span>Номинация, место, победа</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="scene-posts section-white" data-header="black">
+          <div class="scene-inner">
+            <div class="center center-title">
+              <h2 class="title">Публикации</h2>
+            </div>
+            <div class="posts__list">
+              <a href="#" class="posts-item">
+                <div class="posts-item__number">01</div>
+                <div class="posts-item__body">
+                  <div class="posts-item__img">
+                    <img src="img/post.jpg" alt="" />
+                  </div>
+                  <div class="posts-item__text">
+                    <div class="posts-item__title">
+                      <span>awwards arch</span>
+                      <svg
+                        viewBox="0 0 18 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1 0.999999L17 1M17 1L17 17M17 1L0.999999 17"
+                          stroke="black"
+                        />
+                      </svg>
+                    </div>
+                    <span class="posts-item__subtitle"
+                      >Архитектура предметного дизайна / Wowhaus, Punto
+                      Group</span
+                    >
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="posts-item">
+                <div class="posts-item__number">02</div>
+                <div class="posts-item__body">
+                  <div class="posts-item__img">
+                    <img src="img/post.jpg" alt="" />
+                  </div>
+                  <div class="posts-item__text">
+                    <div class="posts-item__title">
+                      <span>awwards arch</span>
+                      <svg
+                        viewBox="0 0 18 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1 0.999999L17 1M17 1L17 17M17 1L0.999999 17"
+                          stroke="black"
+                        />
+                      </svg>
+                    </div>
+                    <span class="posts-item__subtitle"
+                      >Архитектура предметного дизайна / Wowhaus, Punto
+                      Group</span
+                    >
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="posts-item">
+                <div class="posts-item__number">03</div>
+                <div class="posts-item__body">
+                  <div class="posts-item__img">
+                    <img src="img/post.jpg" alt="" />
+                  </div>
+                  <div class="posts-item__text">
+                    <div class="posts-item__title">
+                      <span>awwards arch</span>
+                      <svg
+                        viewBox="0 0 18 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1 0.999999L17 1M17 1L17 17M17 1L0.999999 17"
+                          stroke="black"
+                        />
+                      </svg>
+                    </div>
+                    <span class="posts-item__subtitle"
+                      >Архитектура предметного дизайна / Wowhaus, Punto
+                      Group</span
+                    >
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="posts-item">
+                <div class="posts-item__number">04</div>
+                <div class="posts-item__body">
+                  <div class="posts-item__img">
+                    <img src="img/post.jpg" alt="" />
+                  </div>
+                  <div class="posts-item__text">
+                    <div class="posts-item__title">
+                      <span>awwards arch</span>
+                      <svg
+                        viewBox="0 0 18 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1 0.999999L17 1M17 1L17 17M17 1L0.999999 17"
+                          stroke="black"
+                        />
+                      </svg>
+                    </div>
+                    <span class="posts-item__subtitle"
+                      >Архитектура предметного дизайна / Wowhaus, Punto
+                      Group</span
+                    >
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="posts-item posts-item-more">
+                <div class="posts-item__body">
+                  <div class="posts-item__img"></div>
+                  <div class="link">
+                    <span>[</span>Открыть все публикации<span>]</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
+        <section class="scene-contacts">
+          <div class="container">
+            <div class="home-contacts">
+              <div class="home-contacts__inner switch-block">
+                <div class="home-contacts__blocks">
+                  <div class="home-contacts__block active" data-block>
+                    <a href="mailto:gorevm@mail.ru" class="home-contacts__title"
+                      >gorevm@mail.ru</a
+                    >
+                  </div>
+                  <div class="home-contacts__block" data-block>
+                    <span class="home-contacts__title"
+                      >Нижний Новгород, ул. Ульянова 26/11, <br />
+                      10 этаж</span
+                    >
+                  </div>
+                  <div class="home-contacts__block" data-block>
+                    <a href="tel:+88312161696" class="home-contacts__title"
+                      >+8 (831) 216-16-96</a
+                    >
+                    <a href="tel:+89040607850" class="home-contacts__title"
+                      >+8 (904) 060-78-50</a
+                    >
+                  </div>
+                </div>
+                <div class="home-contacts__tabs">
+                  <div class="home-contacts__tab active" data-nav>Почта,</div>
+                  <div class="home-contacts__tab" data-nav>адрес,</div>
+                  <div class="home-contacts__tab" data-nav>телефон</div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

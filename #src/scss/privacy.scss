@@ -1,0 +1,35 @@
+.section-text {
+  & p {
+    font-size: 18px;
+    font-weight: 300;
+    color: $dark-gray;
+    margin-top: 16px;
+
+    @media (max-width: $bp4) {
+      font-size: 16px;
+    }
+  }
+
+  & h3 {
+    font-size: 26px;
+    font-weight: 400;
+    color: $dark-gray;
+    margin: 32px 0 12px;
+    line-height: 120%;
+  }
+
+  & li {
+    font-size: 18px;
+    font-weight: 300;
+    color: $dark-gray;
+
+    @media (max-width: $bp4) {
+      font-size: 16px;
+    }
+  }
+
+  & ul,
+  ol {
+    margin-top: 16px;
+  }
+}

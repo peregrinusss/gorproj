@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 60;
+  z-index: 110;
   transition: all 0.6s;
   background-color: #0000004d;
   isolation: isolate;
@@ -19,6 +19,10 @@
     }
     & .header__logo-link svg {
       color: $white !important;
+
+      @media (max-width: $bp4) {
+        color: $black !important;
+      }
     }
   }
 
@@ -42,6 +46,26 @@
     }
   }
 
+  &.black {
+    background-color: transparent;
+
+    & .header__link svg {
+      color: $white;
+    }
+
+    & .header__logo-link svg {
+      color: $white;
+    }
+
+    & .line {
+      stroke: $white;
+    }
+
+    @include hover {
+      background-color: transparent;
+    }
+  }
+
   &__top {
     position: relative;
     z-index: 101;
@@ -52,6 +76,10 @@
     padding: 16px 0;
     position: relative;
     z-index: 10;
+
+    @media (max-width: $bp4) {
+      padding: 12px 0;
+    }
   }
 
   &__logo {
@@ -168,14 +196,17 @@
   visibility: hidden;
   position: absolute;
   width: 100%;
-  // padding-top: 78px;
-  height: 100vh;
+  height: 100dvh;
   transition: all 0.6s ease-in-out;
   top: 0;
   left: 0;
   z-index: 100;
   display: grid;
   grid-template-columns: 1fr 1fr;
+
+  @media (max-width: $bp4) {
+    grid-template-columns: 1fr;
+  }
 
   &.active {
     opacity: 1;
@@ -189,6 +220,10 @@
   &__left {
     height: 100%;
 
+    @media (max-width: $bp4) {
+      display: none;
+    }
+
     & img {
       width: 100%;
       height: 100%;
@@ -200,23 +235,45 @@
     padding-top: 78px;
     display: flex;
     flex-direction: column;
-    height: calc(100% - 78px);
+    height: calc(100vh - 78px);
+
+    @media (max-width: $bp4) {
+      height: 100%;
+      padding-top: 70px;
+    }
   }
 
   &__nav {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+
+    @media (max-width: $bp5) {
+      grid-template-columns: 1fr;
+      gap: 80px;
+    }
   }
   &__list {
     display: flex;
     flex-direction: column;
     gap: 24px;
 
+    @media (max-width: $bp1) {
+      gap: 20px;
+    }
+
+    @media (max-width: $bp5) {
+      gap: 16px;
+    }
+
     &-title {
       font-size: 18px;
       font-weight: 400;
       color: $gray;
+
+      @media (max-width: $bp1) {
+        font-size: 16px;
+      }
     }
   }
   &__links {
@@ -233,6 +290,10 @@
 
     @include hover {
       color: $black;
+    }
+
+    @media (max-width: $bp1) {
+      font-size: 26px;
     }
 
     & span {
@@ -252,7 +313,7 @@
     overflow-y: auto;
     border-top: 1px solid #00000014;
     flex: 1;
-    padding: 40px;
+    padding: 40px var(--scene-inset);
 
     &::-webkit-scrollbar-thumb {
       background: linear-gradient(180deg, #679dff 0%, #ff8ae5 100%);
@@ -264,12 +325,26 @@
       border-radius: 8px;
       background-color: $bg;
     }
+
+    @media (max-width: $bp1) {
+      padding: 32px var(--scene-inset);
+    }
   }
 
   &__footer {
     border-top: 1px solid #00000014;
-    padding: 40px;
+    padding: 40px var(--scene-inset);
     padding-bottom: 100px;
+
+    @media (max-width: $bp1) {
+      padding: 32px var(--scene-inset);
+    }
+
+    @media (max-width: $bp4) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
     & .link {
       display: flex;
