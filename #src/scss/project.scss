@@ -71,7 +71,7 @@
     &__tags {
       position: absolute;
       right: var(--scene-inset);
-      bottom: 56px;
+      bottom: var(--scene-inset);
       display: flex;
       gap: 8px;
 
@@ -166,7 +166,6 @@
     width: 80px;
     height: 80px;
     left: 40px;
-    transition: 0.5s all;
 
     @media (max-width: $bp4) {
       width: 60px;
@@ -175,7 +174,11 @@
     }
 
     &:hover {
-      background-color: $dark-gray;
+      background-color: $white;
+
+      & span {
+        color: $black;
+      }
 
       & svg {
         opacity: 0;
@@ -186,6 +189,7 @@
       color: $white;
       font-size: 18px;
       font-weight: 400;
+      transition: 0.3s all;
 
       @media (max-width: $bp4) {
         font-size: 14px;
@@ -208,7 +212,6 @@
     width: 80px;
     height: 80px;
     right: 40px;
-    transition: 0.5s all;
 
     @media (max-width: $bp4) {
       width: 60px;
@@ -217,7 +220,11 @@
     }
 
     &:hover {
-      background-color: $dark-gray;
+      background-color: $white;
+
+      & span {
+        color: $black;
+      }
 
       & svg {
         opacity: 0;
@@ -228,6 +235,7 @@
       color: $white;
       font-size: 18px;
       font-weight: 400;
+      transition: 0.3s all;
 
       @media (max-width: $bp4) {
         font-size: 14px;
@@ -368,7 +376,7 @@
 
   & .ac-users {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     row-gap: 20px;
     flex-wrap: wrap;
   }

@@ -1,6 +1,13 @@
 .footer {
   background-color: $bg;
   padding-top: 30px;
+  height: 90vh;
+
+  & .container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 
   &-hat {
     display: grid;
@@ -66,12 +73,12 @@
   }
 
   &-body {
-    margin-top: 400px;
     display: grid;
     grid-template-columns: repeat(4, auto);
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: 20px;
+    flex: 1 0 auto;
 
     @media (max-width: $bp4) {
       grid-template-columns: 1fr;
@@ -100,6 +107,8 @@
     justify-content: space-between;
     gap: 16px;
     margin-top: 20px;
+    margin-left: calc(-1 * var(--scene-inset));
+    margin-right: calc(-1 * var(--scene-inset));
 
     @media (max-width: $bp4) {
       gap: 4px;
@@ -107,12 +116,21 @@
 
     &__letter {
       width: 100%;
+      height: auto;
       overflow: hidden;
       display: inline-block;
+      position: relative;
 
       & svg {
         width: 100%;
-        display: block;
+        height: 100%;
+        object-fit: cover;
+        position: relative;
+
+        & path {
+          width: 100%;
+          height: 100%;
+        }
       }
     }
   }

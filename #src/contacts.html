@@ -3,6 +3,7 @@
   @@include('_head.html', { "title": "Контакты" })
 
   <body>
+    <div id="page-overlay"></div>
     <div class="wrap">
       <!--header-->
       @@include('_header.html', { "color": "white" })
@@ -36,7 +37,9 @@
                 </div>
               </div>
               <div class="contacts__link">
-                <a href="#" class="link link-up"><span>[</span>Написать нам<span>]</span></a>
+                <a href="#" class="link link-up"
+                  ><span>[</span>Написать нам<span>]</span></a
+                >
               </div>
             </div>
             <div class="contacts__map">

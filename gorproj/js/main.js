@@ -1,123 +1,1578 @@
-//enable scroll
-function enableScroll() {
-  if (document.querySelectorAll(".fixed-block")) {
-    document
-      .querySelectorAll(".fixed-block")
-      .forEach((block) => (block.style.paddingRight = "0px"));
-  }
-  document.body.style.paddingRight = "0px";
-  document.body.classList.remove("no-scroll");
-}
-//disable scroll
-function disableScroll() {
-  let paddingValue =
-    window.innerWidth > 350
-      ? window.innerWidth - document.documentElement.clientWidth + "px"
-      : 0;
-  if (document.querySelectorAll(".fixed-block")) {
-    document
-      .querySelectorAll(".fixed-block")
-      .forEach((block) => (block.style.paddingRight = paddingValue));
-  }
-  document.body.style.paddingRight = paddingValue;
-  document.body.classList.add("no-scroll");
-}
-
+let lenisInstance;
+let isScrollDisabled = false;
 let animSpd = 400; //переменная для скорости анимации
 
-// ===== Burger, Advantages & Project Image Modal =====
-const burger = document.querySelector("#burger");
-const mobileMenu = document.getElementById("mobile-menu");
-const advModal = document.getElementById("advantages-modal");
-const projectImgModal = document.getElementById("project-img-modal");
-const header = document.querySelector(".header");
-const ham = document.querySelector(".ham");
-const advItems = document.querySelectorAll(".advantages__item");
-const projectImgs = document.querySelectorAll(".project__slide");
+// LENIS SCROLL
+document.addEventListener("DOMContentLoaded", () => {
+  // Небольшая задержка для уверенности в полной загрузке страницы
+  // setTimeout(() => {
+  //   ScrollTrigger.refresh(); // Пересчитываем размеры всех элементов после загрузки
+  // }, 500); // 500ms для того, чтобы дождаться полной загрузки
 
-// вспомогалки
-const isOpen = (el) => !!el && el.classList.contains("active");
-const anyOpen = () =>
-  isOpen(mobileMenu) || isOpen(advModal) || isOpen(projectImgModal);
+  gsap.registerPlugin(ScrollTrigger);
 
-const lockScroll = () =>
-  typeof disableScroll === "function" ? disableScroll() : null;
-const unlockScroll = () =>
-  typeof enableScroll === "function" ? enableScroll() : null;
-
-function applyHeaderState(open) {
-  burger?.classList.toggle("active", open);
-  ham?.classList.toggle("active", open);
-  header?.classList.toggle("burger-active", open);
-  open ? lockScroll() : unlockScroll();
-}
-
-function closeAll() {
-  mobileMenu?.classList.remove("active");
-  advModal?.classList.remove("active");
-  projectImgModal?.classList.remove("active");
-  applyHeaderState(false);
-}
-
-function openMenu() {
-  advModal?.classList.remove("active");
-  projectImgModal?.classList.remove("active");
-  mobileMenu?.classList.add("active");
-  applyHeaderState(true);
-}
-
-function openAdv() {
-  mobileMenu?.classList.remove("active");
-  projectImgModal?.classList.remove("active");
-  advModal?.classList.add("active");
-  applyHeaderState(true);
-}
-
-function openProjectModal() {
-  mobileMenu?.classList.remove("active");
-  advModal?.classList.remove("active");
-  projectImgModal?.classList.add("active");
-  applyHeaderState(true);
-}
-
-// ===== События =====
-
-// Клик по бургеру
-if (burger) {
-  burger.addEventListener("click", () => {
-    if (isOpen(advModal) || isOpen(projectImgModal)) {
-      closeAll();
-      return;
-    }
-    isOpen(mobileMenu) ? closeAll() : openMenu();
+  lenisInstance = new Lenis({
+    duration: 1,
+    smoothWheel: true,
+    smoothTouch: true,
   });
-}
 
-// Клик по элементам «Награды» (только <=768px)
-if (advItems.length && advModal) {
-  advItems.forEach((item) => {
-    item.addEventListener("click", (e) => {
-      if (window.matchMedia("(max-width: 768px)").matches) {
-        e.preventDefault();
-        openAdv();
+  lenisInstance.on("scroll", ScrollTrigger.update);
+
+  // Используем requestAnimationFrame, чтобы избежать дерганья
+  function raf(t) {
+    lenisInstance.raf(t);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
+  // очистить память скролла у ScrollTrigger
+  ScrollTrigger.clearScrollMemory("manual");
+
+  // если шрифты грузятся позже — пересчитать размеры
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
+  }
+  window.addEventListener("resize", () => ScrollTrigger.refresh(), {
+    passive: true,
+  });
+
+  ScrollTrigger.matchMedia({
+    // только десктоп
+    "(min-width: 1200px)": function () {
+      const sceneOffice = document.querySelector(".scene-office");
+      if (sceneOffice) {
+        const title = sceneOffice.querySelector(".center-title .title");
+        const secondTitle = sceneOffice.querySelector(".address");
+        const imgs = sceneOffice.querySelector(".scene-office__imgs");
+        const secondImg = sceneOffice.querySelector(".scene-office__img-right");
+        const officePreview = sceneOffice.querySelector(
+          ".scene-office__preview"
+        );
+        const staffPreview = sceneOffice.querySelector(".scene-office__staff");
+        const staffList = sceneOffice.querySelector(".staff");
+
+        if (!title && !secondTitle) return;
+
+        // вспомогалки
+        const insetPx = () =>
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              "--scene-inset"
+            )
+          ) || 16;
+
+        // финальный X для заголовка: ставим левый край на inset
+        const titleTargetX = () => {
+          const ww = window.innerWidth;
+          const w = title.getBoundingClientRect().width;
+          const s = 0.4;
+          const scaledWidth = w * s;
+
+          const x = insetPx() + scaledWidth / 2 - ww / 2;
+
+          return x;
+        };
+
+        gsap.set(title, {
+          x: 0,
+          scale: 1,
+          transformOrigin: "50% 50%",
+        });
+        gsap.set(secondTitle, {
+          opacity: 0,
+        });
+        gsap.set(secondImg, { opacity: 0, xPercent: 100 });
+        gsap.set(imgs, { display: "flex", overflow: "hidden" });
+        gsap.set(officePreview, { xPercent: 0 });
+        gsap.set(staffPreview, { xPercent: 150 });
+        gsap.set(staffList, { x: () => staffList.offsetWidth });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sceneOffice,
+            start: "top top",
+            end: "+=600%",
+            scrub: true,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        tl.to(
+          imgs,
+          {
+            width: "50%",
+            height: "100%",
+            duration: 0.65,
+            ease: "none",
+          },
+          0
+        );
+
+        tl.to(
+          title,
+          {
+            x: titleTargetX,
+            scale: 0.4,
+            duration: 0.65,
+            ease: "power2.inOut",
+            immediateRender: false,
+          },
+          0
+        );
+
+        tl.to(
+          title,
+          {
+            opacity: 0,
+            duration: 0.2,
+            immediateRender: false,
+          },
+          0.3
+        );
+
+        tl.to(
+          secondTitle,
+          {
+            opacity: 1,
+            duration: 0.3,
+            immediateRender: false,
+          },
+          0.5
+        );
+
+        tl.to(
+          secondTitle,
+          {
+            opacity: 1,
+            duration: 0.2,
+            immediateRender: false,
+          },
+          0.5
+        );
+
+        tl.to(
+          secondImg,
+          {
+            opacity: 1,
+            duration: 0,
+            immediateRender: false,
+          },
+          0.9
+        );
+
+        tl.to(
+          secondImg,
+          {
+            xPercent: 0,
+            duration: 0.6,
+            immediateRender: false,
+          },
+          0.9
+        );
+
+        tl.to(
+          officePreview,
+          {
+            xPercent: -100,
+            duration: 1.4,
+            immediateRender: false,
+          },
+          1.5
+        );
+
+        tl.to(
+          staffPreview,
+          {
+            xPercent: 0,
+            duration: 1.4,
+            immediateRender: false,
+          },
+          1.5
+        );
+
+        // TODO: сделать чтобы список кончался у края окна
+        tl.to(
+          staffList,
+          {
+            x: () => {
+              const ww = window.innerWidth; // ширина окна
+              const blockWidth = staffList.offsetWidth; // ширина блока
+
+              const blockLeft = staffList.getBoundingClientRect().left;
+              const x = ww - blockWidth - blockLeft * 0.8;
+              return -staffList.offsetWidth / 2.8;
+            },
+            duration: 5,
+            immediateRender: false,
+          },
+          1.9
+        );
+      }
+
+      document.querySelectorAll(".scene-sevices").forEach((section) => {
+        const title = section.querySelector(".title");
+        const subtitle = section.querySelector(".subtitle");
+        const list = section.querySelector(".services-list");
+        const overlay = section.querySelector(".do-overlay");
+        if (!title || !subtitle || !list || !overlay) return;
+
+        // вспомогалки
+        const insetPx = () =>
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              "--scene-inset"
+            )
+          ) || 16;
+
+        // финальный X для заголовка: ставим левый край на inset
+        const titleTargetX = () => {
+          const ww = window.innerWidth; // ширина окна
+          const w = title.getBoundingClientRect().width; // ширина заголовка при scale=1
+          const s = 0.4; // target scale (0.5 — уменьшаем в два раза)
+          const scaledWidth = w * s; // ширина заголовка после scale
+
+          // Центр (ww/2) + x - (scaledWidth/2) = inset
+          const x = insetPx() + scaledWidth / 2 - ww / 2;
+
+          return x;
+        };
+
+        // стартовые состояния (центр задаёт wrapper .center)
+        gsap.set(title, { x: 0, scale: 1, transformOrigin: "50% 50%" });
+        gsap.set(subtitle, { x: () => window.innerWidth * 0.5, opacity: 0 });
+        gsap.set(overlay, {
+          opacity: 0,
+          x: -overlay.offsetWidth * 3,
+          yPercent: -50,
+        });
+
+        // список стартует чуть сбоку и ниже центра
+        gsap.set(list, {
+          x: () => list.offsetWidth * 0.2, // вправо на 20% ширины самого списка
+          y: () => list.offsetHeight * 0.45, // вниз на половину его высоты
+          opacity: 0,
+        });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=200%",
+            scrub: true,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true, // пересчитать функции при resize/refresh
+          },
+        });
+
+        // Фаза 1: подзаголовок въезжает справа → в центр
+        tl.to(
+          subtitle,
+          // { x: () => window.innerWidth * 0.5, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            immediateRender: false,
+          },
+          0.1
+        );
+
+        // Фаза 2: заголовок уезжает влево до inset и масштабируется
+        tl.to(
+          title,
+          // { x: 0, scale: 1, transformOrigin: "50% 50%" },
+          {
+            x: titleTargetX,
+            scale: 0.4,
+            duration: 0.4,
+            ease: "power2.inOut",
+            immediateRender: false,
+          },
+          0
+        );
+
+        // Фаза 3: subtitle уезжает вверх/полупрозрачный
+        tl.to(
+          subtitle,
+          {
+            y: -list.offsetHeight * 1.1,
+            opacity: 0.6,
+            duration: 0.3,
+            ease: "power2.out",
+          },
+          0.7
+        );
+
+        // Фаза 4: список и overlay появляются
+        tl.to(
+          list,
+          // {
+          //   y: () => list.offsetHeight * 0.45,
+          //   opacity: 0,
+          // },
+          { opacity: 1, duration: 0.6, ease: "none", immediateRender: false },
+          0.9
+        );
+        tl.to(
+          overlay,
+          // { opacity: 0, x: () => -overlay.offsetWidth * 3, yPercent: -50 },
+          {
+            opacity: 1,
+            duration: 0.6,
+            ease: "power1.out",
+            immediateRender: false,
+          },
+          0.9
+        );
+
+        // Фаза 5: список едет вверх
+        tl.to(
+          list,
+          { y: () => -list.offsetHeight * 0.45, duration: 2.0, ease: "none" },
+          1.2
+        );
+
+        // === Подсветка активного пункта по положению overlay ===
+        const items = Array.from(list.querySelectorAll("li"));
+        const inactive = "#9b9b9b"; // серый для остальных
+        gsap.set(items, { color: inactive });
+
+        function highlightClosest() {
+          const o = overlay.getBoundingClientRect();
+          const overlayCenterY = o.top + o.height / 2;
+
+          let bestIdx = -1;
+          let bestDist = Infinity;
+
+          items.forEach((li, i) => {
+            const r = li.getBoundingClientRect();
+            const liCenterY = r.top + r.height / 2;
+            const d = Math.abs(liCenterY - overlayCenterY);
+            if (d < bestDist) {
+              bestDist = d;
+              bestIdx = i;
+            }
+          });
+
+          items.forEach((li, i) => {
+            gsap.to(li, {
+              color: i === bestIdx ? "#000" : inactive,
+              duration: 0.2,
+              overwrite: "auto",
+            });
+          });
+        }
+
+        // дергаем подсветку во время анимации списка
+        tl.eventCallback("onUpdate", highlightClosest);
+        // и один раз сразу
+        highlightClosest();
+      });
+
+      document.querySelectorAll(".scene-advantages").forEach((section) => {
+        const title = section.querySelector(".center-title .title");
+        const panel = section.querySelector(".advantages");
+        if (!title || !panel) return;
+
+        // стартовые: заголовок в центре, панель справа вне экрана
+        gsap.set(panel, { x: () => window.innerWidth, autoAlpha: 0 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=150%",
+            scrub: true,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // 0) пауза с чистым заголовком (немного «подышать»)
+        tl.to({}, { duration: 0.5 }); // короткий холд
+
+        // 1) панель въезжает справа → в центр; заголовок мягко растворяется
+        tl.to(
+          panel,
+          {
+            x: 0,
+            autoAlpha: 1,
+            duration: 0.6,
+            ease: "power3.out",
+          },
+          "<"
+        ) // старт одновременно с фазой
+          .to(
+            title,
+            {
+              opacity: 0.0,
+              duration: 0.1,
+              ease: "power2.out",
+            },
+            "<"
+          ); // почти одновременно, чуть позже
+      });
+
+      const scenePosts = document.querySelector(".scene-posts");
+      if (scenePosts) {
+        const title = scenePosts.querySelector(".center-title .title");
+        const postsList = scenePosts.querySelector(".posts__list");
+        const items = scenePosts.querySelectorAll(".posts-item");
+        if (!title || !postsList || !items.length) return;
+
+        const xStart = () => (window.innerWidth + postsList.scrollWidth) * 0.6;
+        gsap.set(postsList, { x: () => xStart() }); // старт справа
+
+        // финальная позиция: центр последнего элемента = центр списка (при x:0)
+        const calcEndX = () => {
+          const listW = postsList.scrollWidth;
+          const listCenter = listW / 2;
+          const last = items[items.length - 1];
+          const lastCenter = last.offsetLeft + last.offsetWidth / 2; // в координатах списка
+          return -(lastCenter - listCenter);
+        };
+
+        const tlPosts = gsap.timeline({
+          scrollTrigger: {
+            trigger: scenePosts,
+            start: "top top",
+            end: "+=220%",
+            scrub: true,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // один твинап: едем с xStart() до calcEndX()
+        tlPosts.to(
+          postsList,
+          {
+            x: calcEndX, // функция — пересчитается на refresh/resize
+            duration: 0.65,
+            ease: "none",
+          },
+          0
+        );
+      }
+
+      const sceneAbout = document.querySelector(".scene-about");
+      if (sceneAbout) {
+        const sceneInner = sceneAbout.querySelector(".scene-inner");
+        if (!sceneInner) return;
+
+        // Начинаем блок сверху (на 100% выше)
+        gsap.set(sceneInner, { yPercent: -120 });
+
+        gsap.utils.toArray(".scene-about__text p").forEach((p) => {
+          ScrollTrigger.create({
+            trigger: p,
+            start: "center center",
+            onEnter: () => {
+              p.style.color = "#000000"; // перекрашиваем в черный
+            },
+            once: true, // срабатывает только один раз
+          });
+        });
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: sceneAbout,
+              start: "top 80%",
+              end: "bottom top",
+              scrub: true,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          })
+          .to(sceneInner, {
+            yPercent: 120, // плывем до исходного положения
+            ease: "none",
+          });
+      }
+    },
+
+    "(min-width: 769px) and (max-width: 1199px)": function () {
+      document.querySelectorAll(".scene-sevices").forEach((section) => {
+        const title = section.querySelector(".title");
+        const subtitle = section.querySelector(".subtitle");
+        const list = section.querySelector(".services-list");
+        const overlay = section.querySelector(".do-overlay");
+        if (!title || !subtitle || !list || !overlay) return;
+
+        // вспомогалки
+        const insetPx = () =>
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              "--scene-inset"
+            )
+          ) || 16;
+
+        // финальный X для заголовка: ставим левый край на inset
+        const titleTargetX = () => {
+          const ww = window.innerWidth; // ширина окна
+          const w = title.getBoundingClientRect().width; // ширина заголовка при scale=1
+          const s = 0.4; // target scale (0.5 — уменьшаем в два раза)
+          const scaledWidth = w * s; // ширина заголовка после scale
+
+          // Центр (ww/2) + x - (scaledWidth/2) = inset
+          const x = insetPx() + scaledWidth / 2 - ww / 2;
+
+          return x;
+        };
+
+        // стартовые состояния (центр задаёт wrapper .center)
+        gsap.set(title, { x: 0, scale: 1, transformOrigin: "50% 50%" });
+        gsap.set(subtitle, { x: () => window.innerWidth * 0.5, opacity: 0 });
+        gsap.set(overlay, {
+          opacity: 0,
+          x: -overlay.offsetWidth * 3,
+          yPercent: -50,
+        });
+
+        // список стартует чуть сбоку и ниже центра
+        gsap.set(list, {
+          x: () => list.offsetWidth * 0.2, // вправо на 20% ширины самого списка
+          y: () => list.offsetHeight * 0.45, // вниз на половину его высоты
+          opacity: 0,
+        });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=400%",
+            scrub: true,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true, // пересчитать функции при resize/refresh
+          },
+        });
+
+        // Фаза 1: подзаголовок въезжает справа → в центр
+        tl.fromTo(
+          subtitle,
+          { x: () => window.innerWidth * 0.5, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            immediateRender: false,
+          },
+          0.1
+        );
+
+        // Фаза 2: заголовок уезжает влево до inset и масштабируется
+        tl.fromTo(
+          title,
+          { x: 0, scale: 1, transformOrigin: "50% 50%" },
+          {
+            x: titleTargetX,
+            y: -list.offsetHeight * 1.1,
+            scale: 0.4,
+            duration: 0.4,
+            ease: "power2.inOut",
+            immediateRender: false,
+          },
+          0
+        );
+
+        // Фаза 3: subtitle уезжает вверх/полупрозрачный
+        tl.to(
+          subtitle,
+          {
+            y: -list.offsetHeight * 1.1,
+            opacity: 0.6,
+            duration: 0.3,
+            ease: "power2.out",
+          },
+          0.7
+        );
+
+        // Фаза 4: список и overlay появляются
+        tl.fromTo(
+          list,
+          {
+            y: () => list.offsetHeight * 0.45,
+            opacity: 0,
+          },
+          { opacity: 1, duration: 0.6, ease: "none", immediateRender: false },
+          0.9
+        );
+        tl.fromTo(
+          overlay,
+          { opacity: 0, x: () => -overlay.offsetWidth * 3, yPercent: -50 },
+          {
+            opacity: 1,
+            duration: 0.6,
+            ease: "power1.out",
+            immediateRender: false,
+          },
+          0.9
+        );
+
+        // Фаза 5: список едет вверх
+        tl.to(
+          list,
+          { y: () => -list.offsetHeight * 0.45, duration: 2.0, ease: "none" },
+          1.2
+        );
+
+        // === Подсветка активного пункта по положению overlay ===
+        const items = Array.from(list.querySelectorAll("li"));
+        const inactive = "#9b9b9b"; // серый для остальных
+        gsap.set(items, { color: inactive });
+
+        function highlightClosest() {
+          const o = overlay.getBoundingClientRect();
+          const overlayCenterY = o.top + o.height / 2;
+
+          let bestIdx = -1;
+          let bestDist = Infinity;
+
+          items.forEach((li, i) => {
+            const r = li.getBoundingClientRect();
+            const liCenterY = r.top + r.height / 2;
+            const d = Math.abs(liCenterY - overlayCenterY);
+            if (d < bestDist) {
+              bestDist = d;
+              bestIdx = i;
+            }
+          });
+
+          items.forEach((li, i) => {
+            gsap.to(li, {
+              color: i === bestIdx ? "#000" : inactive,
+              duration: 0.2,
+              overwrite: "auto",
+            });
+          });
+        }
+
+        // дергаем подсветку во время анимации списка
+        tl.eventCallback("onUpdate", highlightClosest);
+        // и один раз сразу
+        highlightClosest();
+
+        // на очень узких экранах можно чуть «смягчить» увод
+        ScrollTrigger.matchMedia({
+          "(max-width: 480px)": () => {
+            tl.vars.end = "+=130%";
+            ScrollTrigger.refresh();
+          },
+        });
+      });
+
+      document.querySelectorAll(".scene-advantages").forEach((section) => {
+        const title = section.querySelector(".center-title .title");
+        const panel = section.querySelector(".advantages");
+        if (!title || !panel) return;
+
+        // стартовые: заголовок в центре, панель справа вне экрана
+        gsap.set(panel, { x: () => window.innerWidth, autoAlpha: 0 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=150%",
+            scrub: true,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // 0) пауза с чистым заголовком (немного «подышать»)
+        tl.to({}, { duration: 0.5 }); // короткий холд
+
+        // 1) панель въезжает справа → в центр; заголовок мягко растворяется
+        tl.to(
+          panel,
+          {
+            x: 0,
+            autoAlpha: 1,
+            duration: 0.6,
+            ease: "power3.out",
+          },
+          "<"
+        ) // старт одновременно с фазой
+          .to(
+            title,
+            {
+              opacity: 0.0,
+              duration: 0.1,
+              ease: "power2.out",
+            },
+            "<"
+          ); // почти одновременно, чуть позже
+      });
+
+      const scenePosts = document.querySelector(".scene-posts");
+      if (scenePosts) {
+        const title = scenePosts.querySelector(".center-title .title");
+        const postsList = scenePosts.querySelector(".posts__list");
+        const items = scenePosts.querySelectorAll(".posts-item");
+        if (!title || !postsList || !items.length) return;
+
+        const xStart = () => (window.innerWidth + postsList.scrollWidth) * 0.6;
+        gsap.set(postsList, { x: () => xStart() }); // старт справа
+
+        // финальная позиция: центр последнего элемента = центр списка (при x:0)
+        const calcEndX = () => {
+          const listW = postsList.scrollWidth;
+          const listCenter = listW / 2;
+          const last = items[items.length - 1];
+          const lastCenter = last.offsetLeft + last.offsetWidth / 2; // в координатах списка
+          return -(lastCenter - listCenter);
+        };
+
+        const tlPosts = gsap.timeline({
+          scrollTrigger: {
+            trigger: scenePosts,
+            start: "top top",
+            end: "+=220%",
+            scrub: true,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // один твинап: едем с xStart() до calcEndX()
+        tlPosts.to(
+          postsList,
+          {
+            x: calcEndX, // функция — пересчитается на refresh/resize
+            duration: 0.65,
+            ease: "none",
+          },
+          0
+        );
+
+        tlPosts.to(
+          title,
+          {
+            opacity: 0,
+            duration: 0.2,
+            ease: "none",
+          },
+          0.2
+        );
+      }
+
+      const sceneAbout = document.querySelector(".scene-about");
+      if (sceneAbout) {
+        const sceneInner = sceneAbout.querySelector(".scene-inner");
+        if (!sceneInner) return;
+
+        // Начинаем блок сверху (на 100% выше)
+        gsap.set(sceneInner, { yPercent: -90 });
+
+        gsap.utils.toArray(".scene-about__text p").forEach((p) => {
+          ScrollTrigger.create({
+            trigger: p,
+            start: "center center",
+            onEnter: () => {
+              p.style.color = "#000000"; // перекрашиваем в черный
+            },
+            once: true, // срабатывает только один раз
+          });
+        });
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: sceneAbout,
+              start: "top 80%",
+              end: "bottom top",
+              scrub: true,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          })
+          .to(sceneInner, {
+            yPercent: 90, // плывем до исходного положения
+            ease: "none",
+          });
+      }
+
+      const sceneOffice = document.querySelector(".scene-office");
+      if (sceneOffice) {
+        const title = sceneOffice.querySelector(".center-title .title");
+        const secondTitle = sceneOffice.querySelector(".address");
+        const imgs = sceneOffice.querySelector(".scene-office__imgs");
+        const secondImg = sceneOffice.querySelector(".scene-office__img-right");
+        const officePreview = sceneOffice.querySelector(
+          ".scene-office__preview"
+        );
+        const staffPreview = sceneOffice.querySelector(".scene-office__staff");
+        const staffList = sceneOffice.querySelector(".staff");
+
+        if (!title && !secondTitle) return;
+
+        // вспомогалки
+        const insetPx = () =>
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              "--scene-inset"
+            )
+          ) || 16;
+
+        // финальный X для заголовка: ставим левый край на inset
+        const titleTargetX = () => {
+          const ww = window.innerWidth;
+          const w = title.getBoundingClientRect().width;
+          const s = 0.4;
+          const scaledWidth = w * s;
+
+          const x = insetPx() + scaledWidth / 2 - ww / 2;
+
+          return x;
+        };
+
+        gsap.set(title, {
+          x: 0,
+          scale: 1,
+          transformOrigin: "50% 50%",
+        });
+        gsap.set(secondTitle, {
+          opacity: 0,
+        });
+        gsap.set(secondImg, { opacity: 0, xPercent: 100 });
+        gsap.set(imgs, { display: "flex", overflow: "hidden" });
+        gsap.set(officePreview, { xPercent: 0 });
+        gsap.set(staffPreview, { xPercent: 150 });
+        gsap.set(staffList, { x: () => staffList.offsetWidth });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sceneOffice,
+            start: "top top",
+            end: "+=350%",
+            scrub: true,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        tl.to(
+          imgs,
+          {
+            width: "50%",
+            height: "100%",
+            duration: 0.65,
+            ease: "none",
+          },
+          0
+        );
+
+        tl.to(
+          title,
+          {
+            x: titleTargetX,
+            scale: 0.4,
+            duration: 0.65,
+            ease: "power2.inOut",
+            immediateRender: false,
+          },
+          0
+        );
+
+        tl.to(
+          title,
+          {
+            opacity: 0,
+            duration: 0.2,
+            immediateRender: false,
+          },
+          0.3
+        );
+
+        tl.to(
+          secondTitle,
+          {
+            opacity: 1,
+            duration: 0.3,
+            immediateRender: false,
+          },
+          0.5
+        );
+
+        tl.to(
+          secondTitle,
+          {
+            opacity: 1,
+            duration: 0.2,
+            immediateRender: false,
+          },
+          0.5
+        );
+
+        tl.to(
+          secondImg,
+          {
+            opacity: 1,
+            duration: 0,
+            immediateRender: false,
+          },
+          0.9
+        );
+
+        tl.to(
+          secondImg,
+          {
+            xPercent: 0,
+            duration: 0.6,
+            immediateRender: false,
+          },
+          0.9
+        );
+
+        tl.to(
+          officePreview,
+          {
+            xPercent: -100,
+            duration: 1.4,
+            immediateRender: false,
+          },
+          1.5
+        );
+
+        tl.to(
+          staffPreview,
+          {
+            xPercent: 0,
+            duration: 1.4,
+            immediateRender: false,
+          },
+          1.5
+        );
+
+        tl.to(
+          staffList,
+          {
+            x: () => {
+              const ww = window.innerWidth; // ширина окна
+              const blockWidth = staffList.offsetWidth; // ширина блока
+
+              const blockLeft = staffList.getBoundingClientRect().left;
+              const x = ww - blockWidth - blockLeft * 0.8;
+              return -staffList.offsetWidth / 2.2;
+            },
+            duration: 5,
+            immediateRender: false,
+          },
+          1.9
+        );
+      }
+    },
+
+    // мобильные/планшеты
+    "(max-width: 768px)": function () {
+      document.querySelectorAll(".scene-sevices").forEach((section) => {
+        const title = section.querySelector(".title");
+        const subtitle = section.querySelector(".subtitle");
+        const list = section.querySelector(".services-list");
+        const overlay = section.querySelector(".do-overlay");
+        if (!title || !subtitle || !list || !overlay) return;
+
+        // статичное положение заголовков
+        gsap.set(title, { y: -220, opacity: 1 });
+        gsap.set(subtitle, { y: -160, opacity: 1 });
+
+        // список остаётся на месте
+        gsap.set(list, { x: 0, y: 0, opacity: 1 });
+
+        // overlay стартует слева от списка
+        gsap.set(overlay, {
+          opacity: 1,
+          yPercent: -30,
+          y: -90,
+        });
+
+        // таймлайн без pin, overlay двигается вниз вместе со скроллом
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: list,
+            start: "top 80%",
+            end: "bottom top",
+            scrub: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // overlay двигается сверху списка до низа списка
+        tl.fromTo(
+          overlay,
+          { y: -30 },
+          {
+            y: () => list.scrollHeight - overlay.offsetHeight - 50,
+            ease: "none",
+          }
+        );
+
+        // === Подсветка активного пункта по положению overlay ===
+        const items = Array.from(list.querySelectorAll("li"));
+        const inactive = "#9b9b9b";
+        gsap.set(items, { color: inactive });
+
+        function highlightClosest() {
+          const o = overlay.getBoundingClientRect();
+          const overlayCenterY = o.top + o.height / 2;
+
+          let bestIdx = -1;
+          let bestDist = Infinity;
+
+          items.forEach((li, i) => {
+            const r = li.getBoundingClientRect();
+            const liCenterY = r.top + r.height / 2;
+            const d = Math.abs(liCenterY - overlayCenterY);
+            if (d < bestDist) {
+              bestDist = d;
+              bestIdx = i;
+            }
+          });
+
+          items.forEach((li, i) => {
+            gsap.to(li, {
+              color: i === bestIdx ? "#000" : inactive,
+              duration: 0.2,
+              overwrite: "auto",
+            });
+          });
+        }
+
+        tl.eventCallback("onUpdate", highlightClosest);
+        highlightClosest();
+      });
+
+      const sceneAbout = document.querySelector(".scene-about");
+      if (sceneAbout) {
+        const sceneInner = sceneAbout.querySelector(".scene-inner");
+        if (!sceneInner) return;
+
+        gsap.utils.toArray(".scene-about__text p").forEach((p) => {
+          ScrollTrigger.create({
+            trigger: p,
+            start: "center center",
+            onEnter: () => {
+              p.style.color = "#000000"; // перекрашиваем в черный
+            },
+            once: true, // срабатывает только один раз
+          });
+        });
+      }
+    },
+  });
+
+  // header color change on scroll
+  const header = document.querySelector(".header");
+  const intro = document.querySelector(".intro");
+  if (header && intro) {
+    ScrollTrigger.create({
+      trigger: intro,
+      start: "bottom top",
+      onEnter: () => header.classList.add("white"),
+      onLeaveBack: () => header.classList.remove("white"),
+    });
+  }
+
+  // footer animation
+  const footer = document.querySelector(".footer");
+  if (footer) {
+    const links = footer.querySelectorAll(
+      ".footer__link, .footer-body__link, .link"
+    );
+
+    gsap.set(links, { y: 30, opacity: 0 });
+
+    gsap.to(links, {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      ease: "power3.out",
+      stagger: { each: 0.1, from: "start" },
+      scrollTrigger: {
+        trigger: footer,
+        start: "top 90%", // футер почти заходит
+        toggleActions: "play none none reverse",
+      },
+    });
+  }
+
+  // footer logo animation
+  const footerLogo = document.querySelector(".footer-logo");
+  if (footerLogo) {
+    const letters = footerLogo.querySelectorAll(".footer-logo__letter svg");
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    // стартовое состояние
+    gsap.set(letters, { yPercent: 110 });
+
+    // таймлайн (пауза по умолчанию)
+    const tlLogo = gsap.timeline({ paused: true }).to(letters, {
+      yPercent: 2,
+      duration: prefersReduced ? 0 : 2,
+      ease: "power3.out",
+      stagger: { each: 0.1, from: "start" },
+    });
+
+    // ScrollTrigger управляет запуском/сбросом
+    ScrollTrigger.create({
+      trigger: footerLogo,
+      start: "top bottom", // блок вошёл в экран (снизу)
+      end: "bottom top", // блок полностью вышел (сверху)
+      onEnter: () => tlLogo.restart(),
+      onEnterBack: () => tlLogo.restart(),
+      onLeave: () => {
+        tlLogo.pause(0);
+        gsap.set(letters, { yPercent: 110 });
+      },
+      onLeaveBack: () => {
+        tlLogo.pause(0);
+        gsap.set(letters, { yPercent: 110 });
+      },
+      invalidateOnRefresh: true,
+    });
+  }
+
+  // project animation
+  const projectHatImgs = document.querySelectorAll(".project-hat__img");
+  if (projectHatImgs.length > 0) {
+    projectHatImgs.forEach((img) => {
+      const wrapper = img.closest(".project-hat__inner");
+      const scaleAmount = 1.1; // легкое увеличение
+      const movePercent = 50; // смещение по Y
+
+      // Создаем ScrollTrigger для параллакса
+      const st = gsap.fromTo(
+        img,
+        { yPercent: 0, scale: 1 },
+        {
+          yPercent: movePercent,
+          scale: scaleAmount,
+          ease: "none",
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: wrapper,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        }
+      );
+
+      // Сразу синхронизируем при загрузке страницы
+      window.addEventListener("load", () => {
+        ScrollTrigger.refresh();
+      });
+    });
+  }
+
+  // Параллакс для слайдера
+  const projectGalleries = document.querySelectorAll(
+    ".project-swiper-parallax"
+  );
+  if (projectGalleries.length > 0) {
+    projectGalleries.forEach((gallery) => {
+      gsap.fromTo(
+        gallery,
+        { yPercent: 0 },
+        {
+          yPercent: 20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: gallery,
+            start: "top bottom", // когда верх галереи виден снизу
+            end: "bottom top", // когда галерея полностью ушла вверх
+            scrub: true, // плавная синхронизация с прокруткой
+            invalidateOnRefresh: true,
+          },
+        }
+      );
+    });
+
+    // пересчет ScrollTrigger после загрузки страницы
+    window.addEventListener("load", () => {
+      ScrollTrigger.refresh();
+    });
+  }
+
+  // preloader
+  const loader = document.querySelector(".loader");
+  if (loader) {
+    disableScroll();
+
+    const svgs = gsap.utils.toArray(".loader__inner svg");
+
+    // уважение reduce-motion
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    // стартовые состояния
+    gsap.set(svgs, { transformOrigin: "50% 50%", x: 0, y: 0 });
+
+    const tl = gsap.timeline({
+      repeat: 0,
+      yoyo: true,
+      defaults: { ease: "power2.inOut" },
+    });
+
+    if (!reduced) {
+      // Фаза 1: движение элементов одновременно
+      tl.to(
+        svgs[0],
+        {
+          keyframes: [
+            { x: 0, y: -53, duration: 0.6, ease: "power2.inOut" }, // для svgs[0]
+          ],
+        },
+        0.2
+      );
+
+      tl.to(
+        svgs[1],
+        {
+          keyframes: [
+            { x: 0, y: 53, duration: 0.6, ease: "power2.inOut" }, // для svgs[1]
+          ],
+        },
+        0.2
+      );
+
+      // Фаза 2: задержка на 1 секунду и затем движение элементов одновременно
+      tl.to(
+        svgs[0],
+        {
+          keyframes: [{ x: 105, y: -53, duration: 0.6, ease: "power2.inOut" }],
+        },
+        0.9
+      );
+
+      tl.to(
+        svgs[1],
+        {
+          keyframes: [{ x: -107, y: 53, duration: 0.6, ease: "power2.inOut" }],
+        },
+        0.9
+      );
+    }
+
+    // анимация скрытия лоадера с параллакс эффектом
+    function hideLoader() {
+      if (reduced) {
+        loader.classList.add("hidden");
+        return;
+      }
+
+      const tlHide = gsap.timeline({
+        onComplete: () => {
+          animateText();
+          enableScroll();
+          loader.classList.add("hidden");
+        },
+      });
+
+      // Параллакс эффект при скрытии
+      tlHide.to(loader, {
+        y: "-100vh", // двигаем лоадер вверх
+        duration: 1.5,
+        ease: "power3.out",
+      });
+
+      // Элементы внутри лоадера двигаются с разной скоростью
+      tlHide.to(svgs[0], { y: "80vh", duration: 1.5, ease: "power3.out" }, 0);
+      tlHide.to(svgs[1], { y: "88vh", duration: 1.5, ease: "power3.out" }, 0);
+    }
+
+    window.onload = function () {
+      setTimeout(hideLoader, 2000); // скрытие лоадера с задержкой 2000 мс
+    };
+  }
+
+  // Анимация для текста
+  function animateText() {
+    const animTexts = document.querySelectorAll(".animated-text");
+    if (animTexts.length) {
+      animTexts.forEach((item) => {
+        const text = item.innerHTML.split("<br>");
+        item.innerHTML = "";
+
+        text.forEach((line, i) => {
+          const wrapper = document.createElement("div");
+          wrapper.classList.add("line-wrapper");
+
+          const span = document.createElement("span");
+          span.classList.add("line");
+          span.style.animationDelay = `${i * 0.3}s`;
+          span.innerHTML = line.trim();
+
+          wrapper.appendChild(span);
+          item.appendChild(wrapper);
+        });
+
+        item.style.visibility = "visible";
+      });
+    }
+  }
+
+  function disableScroll() {
+    if (!lenisInstance || isScrollDisabled) return;
+    isScrollDisabled = true;
+
+    // останавливаем Lenis
+    lenisInstance.stop();
+
+    // блокируем wheel/touch/keyboard события
+    window.addEventListener("wheel", preventDefault, { passive: false });
+    window.addEventListener("touchmove", preventDefault, { passive: false });
+    window.addEventListener("keydown", preventKeyScroll, { passive: false });
+
+    // фиксируем body и padding-right
+    const paddingValue =
+      window.innerWidth > 350
+        ? window.innerWidth - document.documentElement.clientWidth + "px"
+        : 0;
+
+    document.body.style.overflow = "hidden";
+    document.body.style.paddingRight = paddingValue;
+
+    document.querySelectorAll(".fixed-block").forEach((block) => {
+      block.style.paddingRight = paddingValue;
+    });
+  }
+
+  function enableScroll() {
+    if (!lenisInstance || !isScrollDisabled) return;
+    isScrollDisabled = false;
+
+    // запускаем Lenis
+    lenisInstance.start();
+
+    window.removeEventListener("wheel", preventDefault, { passive: false });
+    window.removeEventListener("touchmove", preventDefault, { passive: false });
+    window.removeEventListener("keydown", preventKeyScroll, { passive: false });
+
+    document.body.style.overflow = "";
+    document.body.style.paddingRight = "0px";
+
+    document.querySelectorAll(".fixed-block").forEach((block) => {
+      block.style.paddingRight = "0px";
+    });
+  }
+
+  // ===== Burger, Advantages & Project Image Modal =====
+  const burger = document.querySelector("#burger");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const advModal = document.getElementById("advantages-modal");
+  const projectImgModal = document.getElementById("project-img-modal");
+  // const header = document.querySelector(".header");
+  const ham = document.querySelector(".ham");
+  const advItems = document.querySelectorAll(".advantages__item");
+  const projectImgs = document.querySelectorAll(".project__slide");
+
+  // вспомогалки
+  const isOpen = (el) => !!el && el.classList.contains("active");
+  const anyOpen = () =>
+    isOpen(mobileMenu) || isOpen(advModal) || isOpen(projectImgModal);
+
+  const lockScroll = () =>
+    typeof disableScroll === "function" ? disableScroll() : null;
+  const unlockScroll = () =>
+    typeof enableScroll === "function" ? enableScroll() : null;
+
+  function applyHeaderState(open) {
+    burger?.classList.toggle("active", open);
+    ham?.classList.toggle("active", open);
+    header?.classList.toggle("burger-active", open);
+    open ? lockScroll() : unlockScroll();
+  }
+
+  function closeAll() {
+    mobileMenu?.classList.remove("active");
+    advModal?.classList.remove("active");
+    projectImgModal?.classList.remove("active");
+    applyHeaderState(false);
+  }
+
+  function openMenu() {
+    advModal?.classList.remove("active");
+    projectImgModal?.classList.remove("active");
+    mobileMenu?.classList.add("active");
+    applyHeaderState(true);
+  }
+
+  function openAdv() {
+    mobileMenu?.classList.remove("active");
+    projectImgModal?.classList.remove("active");
+    advModal?.classList.add("active");
+    applyHeaderState(true);
+  }
+
+  function openProjectModal() {
+    mobileMenu?.classList.remove("active");
+    advModal?.classList.remove("active");
+    projectImgModal?.classList.add("active");
+    applyHeaderState(true);
+  }
+
+  // ===== События =====
+
+  // Клик по бургеру
+  if (burger) {
+    burger.addEventListener("click", () => {
+      if (isOpen(advModal) || isOpen(projectImgModal)) {
+        closeAll();
+        return;
+      }
+      isOpen(mobileMenu) ? closeAll() : openMenu();
+    });
+  }
+
+  // Клик по элементам «Награды» (только <=768px)
+  if (advItems.length && advModal) {
+    advItems.forEach((item) => {
+      item.addEventListener("click", (e) => {
+        if (window.matchMedia("(max-width: 768px)").matches) {
+          e.preventDefault();
+          openAdv();
+        }
+      });
+    });
+  }
+
+  // Клик по проекту открывает модалку
+  if (projectImgs.length && projectImgModal) {
+    projectImgs.forEach((item) => {
+      item.addEventListener("click", () => {
+        openProjectModal();
+      });
+    });
+  }
+
+  // ESC закрывает всё
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && anyOpen()) closeAll();
+  });
+
+  // модальное окно
+  const modalOpenBtn = document.querySelectorAll(".mod-open-btn");
+  const modalCloseBtn = document.querySelectorAll(".mod-close-btn");
+  const modal = document.querySelectorAll(".modal");
+  const successModal = document.querySelector("#success-modal");
+  const errorModal = document.querySelector("#error-modal");
+
+  //open success modal
+  window.openSuccessModal = function (title, btnText) {
+    successModal.querySelector("h3").textContent = title
+      ? title
+      : "Ваша заявка успешно отправлена";
+    successModal.querySelector(".main-btn").textContent = btnText
+      ? btnText
+      : "Закрыть";
+
+    let activeModal = document.querySelector(".modal.open");
+    if (!activeModal) {
+      disableScroll();
+    }
+    if (activeModal) {
+      activeModal.classList.remove("open");
+    }
+    successModal.classList.add("open");
+  };
+
+  //open error modal
+  function openErrorModal(title, btnText) {
+    errorModal.querySelector("h3").textContent = title
+      ? title
+      : "Что-то пошло не так, попробуйте еще раз";
+    errorModal.querySelector(".main-btn").textContent = btnText
+      ? btnText
+      : "Закрыть";
+
+    let activeModal = document.querySelector(".modal.open");
+    if (!activeModal) {
+      disableScroll();
+    }
+    if (activeModal) {
+      activeModal.classList.remove("open");
+    }
+    errorModal.classList.add("open");
+  }
+
+  //open modal
+  function openModal(modal) {
+    let activeModal = document.querySelector(".modal.open");
+    if (!activeModal) {
+      disableScroll();
+    }
+    if (activeModal) {
+      activeModal.classList.remove("open");
+    }
+    modal.classList.add("open");
+  }
+  //close modal
+  function closeModal(modal) {
+    modal.classList.remove("open");
+
+    const burgerMenu = document.querySelector(".mobile-menu");
+
+    if (!burgerMenu.classList.contains("active")) {
+      setTimeout(() => {
+        enableScroll();
+      }, animSpd);
+    }
+  }
+  // modal click outside
+  modal.forEach((mod) => {
+    mod.addEventListener("click", (e) => {
+      if (!mod.querySelector(".modal__content").contains(e.target)) {
+        closeModal(mod);
       }
     });
   });
-}
-
-// Клик по проекту открывает модалку
-if (projectImgs.length && projectImgModal) {
-  projectImgs.forEach((item) => {
-    item.addEventListener("click", () => {
-      openProjectModal();
+  // modal button on click
+  modalOpenBtn.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      let href = btn.getAttribute("data-modal");
+      openModal(document.getElementById(href));
     });
   });
+  // modal close button on click
+  modalCloseBtn.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      let href = btn.getAttribute("data-modal");
+      closeModal(document.getElementById(href));
+    });
+  });
+});
+
+function preventDefault(e) {
+  e.preventDefault();
 }
 
-// ESC закрывает всё
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && anyOpen()) closeAll();
-});
+function preventKeyScroll(e) {
+  // стрелки, пробел, PageUp/PageDown, Home/End
+  const keys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
+  if (keys.includes(e.keyCode)) e.preventDefault();
+}
 
 // Аккордеон меню
 const menuAccordion = document.querySelector(".accordion-container");
@@ -135,7 +1590,6 @@ if (menuAccordion) {
 
 // тултип
 const buttons = document.querySelectorAll(".tooltip-btn");
-
 if (buttons.length) {
   buttons.forEach((button) => {
     const tooltipId = button.getAttribute("data-tooltip-target");
@@ -166,102 +1620,6 @@ if (buttons.length) {
     });
   }
 }
-
-// модальное окно
-const modalOpenBtn = document.querySelectorAll(".mod-open-btn");
-const modalCloseBtn = document.querySelectorAll(".mod-close-btn");
-const modal = document.querySelectorAll(".modal");
-const successModal = document.querySelector("#success-modal");
-const errorModal = document.querySelector("#error-modal");
-
-//open success modal
-function openSuccessModal(title, btnText) {
-  successModal.querySelector("h3").textContent = title
-    ? title
-    : "Ваша заявка успешно отправлена";
-  successModal.querySelector(".main-btn").textContent = btnText
-    ? btnText
-    : "Закрыть";
-
-  let activeModal = document.querySelector(".modal.open");
-  if (!activeModal) {
-    disableScroll();
-  }
-  if (activeModal) {
-    activeModal.classList.remove("open");
-  }
-  successModal.classList.add("open");
-}
-
-//open error modal
-function openErrorModal(title, btnText) {
-  errorModal.querySelector("h3").textContent = title
-    ? title
-    : "Что-то пошло не так, попробуйте еще раз";
-  errorModal.querySelector(".main-btn").textContent = btnText
-    ? btnText
-    : "Закрыть";
-
-  let activeModal = document.querySelector(".modal.open");
-  if (!activeModal) {
-    disableScroll();
-  }
-  if (activeModal) {
-    activeModal.classList.remove("open");
-  }
-  errorModal.classList.add("open");
-}
-
-//open modal
-function openModal(modal) {
-  let activeModal = document.querySelector(".modal.open");
-  if (!activeModal) {
-    disableScroll();
-  }
-  if (activeModal) {
-    activeModal.classList.remove("open");
-  }
-  modal.classList.add("open");
-}
-//close modal
-function closeModal(modal) {
-  modal.classList.remove("open");
-
-  const burgerMenu = document.querySelector(".mobile-menu");
-
-  if (!burgerMenu.classList.contains("active")) {
-    setTimeout(() => {
-      enableScroll();
-    }, animSpd);
-  }
-}
-// modal click outside
-modal.forEach((mod) => {
-  mod.addEventListener("click", (e) => {
-    if (
-      !mod.querySelector(".modal__content").contains(e.target) ||
-      mod.querySelector(".btn-close").contains(e.target)
-    ) {
-      closeModal(mod);
-    }
-  });
-});
-// modal button on click
-modalOpenBtn.forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
-    let href = btn.getAttribute("data-modal");
-    openModal(document.getElementById(href));
-  });
-});
-// modal close button on click
-modalCloseBtn.forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
-    let href = btn.getAttribute("data-modal");
-    closeModal(document.getElementById(href));
-  });
-});
 
 // mask input
 const inp = document.querySelectorAll("input[type=tel]");
@@ -7247,912 +8605,6 @@ if (banner) {
   });
 }
 
-// LENIS SCROLL
-document.addEventListener("DOMContentLoaded", () => {
-  // Небольшая задержка для уверенности в полной загрузке страницы
-  setTimeout(() => {
-    ScrollTrigger.refresh(); // Пересчитываем размеры всех элементов после загрузки
-  }, 500); // 500ms для того, чтобы дождаться полной загрузки
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  const lenis = new Lenis({
-    duration: 1,
-    smoothWheel: true,
-    smoothTouch: true,
-  });
-
-  lenis.on("scroll", ScrollTrigger.update);
-
-  // Используем requestAnimationFrame, чтобы избежать дерганья
-  function raf(t) {
-    lenis.raf(t);
-    requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
-
-  // запретить восстановление позици скролла браузером
-  try {
-    history.scrollRestoration = "manual";
-  } catch (_) {}
-
-  // очистить память скролла у ScrollTrigger
-  ScrollTrigger.clearScrollMemory();
-
-  ScrollTrigger.matchMedia({
-    // только десктоп
-    "(min-width: 1200px)": function () {
-      document.querySelectorAll(".scene-sevices").forEach((section) => {
-        const title = section.querySelector(".title");
-        const subtitle = section.querySelector(".subtitle");
-        const list = section.querySelector(".services-list");
-        const overlay = section.querySelector(".do-overlay");
-        if (!title || !subtitle || !list || !overlay) return;
-
-        // вспомогалки
-        const insetPx = () =>
-          parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue(
-              "--scene-inset"
-            )
-          ) || 16;
-
-        // финальный X для заголовка: ставим левый край на inset
-        const titleTargetX = () => {
-          const ww = window.innerWidth; // ширина окна
-          const w = title.getBoundingClientRect().width; // ширина заголовка при scale=1
-          const s = 0.4; // target scale (0.5 — уменьшаем в два раза)
-          const scaledWidth = w * s; // ширина заголовка после scale
-
-          // Центр (ww/2) + x - (scaledWidth/2) = inset
-          const x = insetPx() + scaledWidth / 2 - ww / 2;
-
-          return x;
-        };
-
-        // стартовые состояния (центр задаёт wrapper .center)
-        gsap.set(title, { x: 0, scale: 1, transformOrigin: "50% 50%" });
-        gsap.set(subtitle, { x: () => window.innerWidth * 0.5, opacity: 0 });
-        gsap.set(overlay, {
-          opacity: 0,
-          x: -overlay.offsetWidth * 3,
-          yPercent: -50,
-        });
-
-        // список стартует чуть сбоку и ниже центра
-        gsap.set(list, {
-          x: () => list.offsetWidth * 0.2, // вправо на 20% ширины самого списка
-          y: () => list.offsetHeight * 0.45, // вниз на половину его высоты
-          opacity: 0,
-        });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "+=200%",
-            scrub: true,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true, // пересчитать функции при resize/refresh
-          },
-        });
-
-        // Фаза 1: подзаголовок въезжает справа → в центр
-        tl.to(
-          subtitle,
-          // { x: () => window.innerWidth * 0.5, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power2.out",
-            immediateRender: false,
-          },
-          0.1
-        );
-
-        // Фаза 2: заголовок уезжает влево до inset и масштабируется
-        tl.to(
-          title,
-          // { x: 0, scale: 1, transformOrigin: "50% 50%" },
-          {
-            x: titleTargetX,
-            scale: 0.4,
-            duration: 0.4,
-            ease: "power2.inOut",
-            immediateRender: false,
-          },
-          0
-        );
-
-        // Фаза 3: subtitle уезжает вверх/полупрозрачный
-        tl.to(
-          subtitle,
-          {
-            y: -list.offsetHeight * 1.1,
-            opacity: 0.6,
-            duration: 0.3,
-            ease: "power2.out",
-          },
-          0.7
-        );
-
-        // Фаза 4: список и overlay появляются
-        tl.to(
-          list,
-          // {
-          //   y: () => list.offsetHeight * 0.45,
-          //   opacity: 0,
-          // },
-          { opacity: 1, duration: 0.6, ease: "none", immediateRender: false },
-          0.9
-        );
-        tl.to(
-          overlay,
-          // { opacity: 0, x: () => -overlay.offsetWidth * 3, yPercent: -50 },
-          {
-            opacity: 1,
-            duration: 0.6,
-            ease: "power1.out",
-            immediateRender: false,
-          },
-          0.9
-        );
-
-        // Фаза 5: список едет вверх
-        tl.to(
-          list,
-          { y: () => -list.offsetHeight * 0.45, duration: 2.0, ease: "none" },
-          1.2
-        );
-
-        // === Подсветка активного пункта по положению overlay ===
-        const items = Array.from(list.querySelectorAll("li"));
-        const inactive = "#9b9b9b"; // серый для остальных
-        gsap.set(items, { color: inactive });
-
-        function highlightClosest() {
-          const o = overlay.getBoundingClientRect();
-          const overlayCenterY = o.top + o.height / 2;
-
-          let bestIdx = -1;
-          let bestDist = Infinity;
-
-          items.forEach((li, i) => {
-            const r = li.getBoundingClientRect();
-            const liCenterY = r.top + r.height / 2;
-            const d = Math.abs(liCenterY - overlayCenterY);
-            if (d < bestDist) {
-              bestDist = d;
-              bestIdx = i;
-            }
-          });
-
-          items.forEach((li, i) => {
-            gsap.to(li, {
-              color: i === bestIdx ? "#000" : inactive,
-              duration: 0.2,
-              overwrite: "auto",
-            });
-          });
-        }
-
-        // дергаем подсветку во время анимации списка
-        tl.eventCallback("onUpdate", highlightClosest);
-        // и один раз сразу
-        highlightClosest();
-      });
-
-      document.querySelectorAll(".scene-advantages").forEach((section) => {
-        const title = section.querySelector(".center-title .title");
-        const panel = section.querySelector(".advantages");
-        if (!title || !panel) return;
-
-        // стартовые: заголовок в центре, панель справа вне экрана
-        gsap.set(panel, { x: () => window.innerWidth, autoAlpha: 0 });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "+=150%",
-            scrub: true,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        // 0) пауза с чистым заголовком (немного «подышать»)
-        tl.to({}, { duration: 0.5 }); // короткий холд
-
-        // 1) панель въезжает справа → в центр; заголовок мягко растворяется
-        tl.to(
-          panel,
-          {
-            x: 0,
-            autoAlpha: 1,
-            duration: 0.6,
-            ease: "power3.out",
-          },
-          "<"
-        ) // старт одновременно с фазой
-          .to(
-            title,
-            {
-              opacity: 0.0,
-              duration: 0.1,
-              ease: "power2.out",
-            },
-            "<"
-          ); // почти одновременно, чуть позже
-      });
-
-      const scenePosts = document.querySelector(".scene-posts");
-      if (scenePosts) {
-        const title = scenePosts.querySelector(".center-title .title");
-        const postsList = scenePosts.querySelector(".posts__list");
-        const items = scenePosts.querySelectorAll(".posts-item");
-        if (!title || !postsList || !items.length) return;
-
-        const xStart = () => (window.innerWidth + postsList.scrollWidth) * 0.6;
-        gsap.set(postsList, { x: () => xStart() }); // старт справа
-
-        // финальная позиция: центр последнего элемента = центр списка (при x:0)
-        const calcEndX = () => {
-          const listW = postsList.scrollWidth;
-          const listCenter = listW / 2;
-          const last = items[items.length - 1];
-          const lastCenter = last.offsetLeft + last.offsetWidth / 2; // в координатах списка
-          return -(lastCenter - listCenter);
-        };
-
-        const tlPosts = gsap.timeline({
-          scrollTrigger: {
-            trigger: scenePosts,
-            start: "top top",
-            end: "+=220%",
-            scrub: true,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        // один твинап: едем с xStart() до calcEndX()
-        tlPosts.to(
-          postsList,
-          {
-            x: calcEndX, // функция — пересчитается на refresh/resize
-            duration: 0.65,
-            ease: "none",
-          },
-          0
-        );
-      }
-    },
-
-    "(min-width: 769px) and (max-width: 1199px)": function () {
-      document.querySelectorAll(".scene-sevices").forEach((section) => {
-        const title = section.querySelector(".title");
-        const subtitle = section.querySelector(".subtitle");
-        const list = section.querySelector(".services-list");
-        const overlay = section.querySelector(".do-overlay");
-        const listItems = section.querySelectorAll(".services-list li");
-        if (!title || !subtitle || !list || !overlay) return;
-
-        // вспомогалки
-        const insetPx = () =>
-          parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue(
-              "--scene-inset"
-            )
-          ) || 16;
-
-        // финальный X для заголовка: ставим левый край на inset
-        const titleTargetX = () => {
-          const ww = window.innerWidth; // ширина окна
-          const w = title.getBoundingClientRect().width; // ширина заголовка при scale=1
-          const s = 0.4; // target scale (0.5 — уменьшаем в два раза)
-          const scaledWidth = w * s; // ширина заголовка после scale
-
-          // Центр (ww/2) + x - (scaledWidth/2) = inset
-          const x = insetPx() + scaledWidth / 2 - ww / 2;
-
-          return x;
-        };
-
-        // стартовые состояния (центр задаёт wrapper .center)
-        gsap.set(title, { x: 0, scale: 1, transformOrigin: "50% 50%" });
-        gsap.set(subtitle, { x: () => window.innerWidth * 0.5, opacity: 0 });
-        gsap.set(overlay, {
-          opacity: 0,
-          x: -overlay.offsetWidth * 3,
-          yPercent: -50,
-        });
-
-        // список стартует чуть сбоку и ниже центра
-        gsap.set(list, {
-          x: () => list.offsetWidth * 0.2, // вправо на 20% ширины самого списка
-          y: () => list.offsetHeight * 0.45, // вниз на половину его высоты
-          opacity: 0,
-        });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "+=400%",
-            scrub: true,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true, // пересчитать функции при resize/refresh
-          },
-        });
-
-        // Фаза 1: подзаголовок въезжает справа → в центр
-        tl.fromTo(
-          subtitle,
-          { x: () => window.innerWidth * 0.5, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power2.out",
-            immediateRender: false,
-          },
-          0.1
-        );
-
-        // Фаза 2: заголовок уезжает влево до inset и масштабируется
-        tl.fromTo(
-          title,
-          { x: 0, scale: 1, transformOrigin: "50% 50%" },
-          {
-            x: titleTargetX,
-            y: -list.offsetHeight * 1.1,
-            scale: 0.4,
-            duration: 0.4,
-            ease: "power2.inOut",
-            immediateRender: false,
-          },
-          0
-        );
-
-        // Фаза 3: subtitle уезжает вверх/полупрозрачный
-        tl.to(
-          subtitle,
-          {
-            y: -list.offsetHeight * 1.1,
-            opacity: 0.6,
-            duration: 0.3,
-            ease: "power2.out",
-          },
-          0.7
-        );
-
-        // Фаза 4: список и overlay появляются
-        tl.fromTo(
-          list,
-          {
-            y: () => list.offsetHeight * 0.45,
-            opacity: 0,
-          },
-          { opacity: 1, duration: 0.6, ease: "none", immediateRender: false },
-          0.9
-        );
-        tl.fromTo(
-          overlay,
-          { opacity: 0, x: () => -overlay.offsetWidth * 3, yPercent: -50 },
-          {
-            opacity: 1,
-            duration: 0.6,
-            ease: "power1.out",
-            immediateRender: false,
-          },
-          0.9
-        );
-
-        // Фаза 5: список едет вверх
-        tl.to(
-          list,
-          { y: () => -list.offsetHeight * 0.45, duration: 2.0, ease: "none" },
-          1.2
-        );
-
-        // === Подсветка активного пункта по положению overlay ===
-        const items = Array.from(list.querySelectorAll("li"));
-        const inactive = "#9b9b9b"; // серый для остальных
-        gsap.set(items, { color: inactive });
-
-        function highlightClosest() {
-          const o = overlay.getBoundingClientRect();
-          const overlayCenterY = o.top + o.height / 2;
-
-          let bestIdx = -1;
-          let bestDist = Infinity;
-
-          items.forEach((li, i) => {
-            const r = li.getBoundingClientRect();
-            const liCenterY = r.top + r.height / 2;
-            const d = Math.abs(liCenterY - overlayCenterY);
-            if (d < bestDist) {
-              bestDist = d;
-              bestIdx = i;
-            }
-          });
-
-          items.forEach((li, i) => {
-            gsap.to(li, {
-              color: i === bestIdx ? "#000" : inactive,
-              duration: 0.2,
-              overwrite: "auto",
-            });
-          });
-        }
-
-        // дергаем подсветку во время анимации списка
-        tl.eventCallback("onUpdate", highlightClosest);
-        // и один раз сразу
-        highlightClosest();
-
-        // на очень узких экранах можно чуть «смягчить» увод
-        ScrollTrigger.matchMedia({
-          "(max-width: 480px)": () => {
-            tl.vars.end = "+=130%";
-            ScrollTrigger.refresh();
-          },
-        });
-      });
-
-      document.querySelectorAll(".scene-advantages").forEach((section) => {
-        const title = section.querySelector(".center-title .title");
-        const panel = section.querySelector(".advantages");
-        if (!title || !panel) return;
-
-        // стартовые: заголовок в центре, панель справа вне экрана
-        gsap.set(panel, { x: () => window.innerWidth, autoAlpha: 0 });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "+=150%",
-            scrub: true,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        // 0) пауза с чистым заголовком (немного «подышать»)
-        tl.to({}, { duration: 0.5 }); // короткий холд
-
-        // 1) панель въезжает справа → в центр; заголовок мягко растворяется
-        tl.to(
-          panel,
-          {
-            x: 0,
-            autoAlpha: 1,
-            duration: 0.6,
-            ease: "power3.out",
-          },
-          "<"
-        ) // старт одновременно с фазой
-          .to(
-            title,
-            {
-              opacity: 0.0,
-              duration: 0.1,
-              ease: "power2.out",
-            },
-            "<"
-          ); // почти одновременно, чуть позже
-      });
-
-      const scenePosts = document.querySelector(".scene-posts");
-      if (scenePosts) {
-        const title = scenePosts.querySelector(".center-title .title");
-        const postsList = scenePosts.querySelector(".posts__list");
-        const items = scenePosts.querySelectorAll(".posts-item");
-        if (!title || !postsList || !items.length) return;
-
-        const xStart = () => (window.innerWidth + postsList.scrollWidth) * 0.6;
-        gsap.set(postsList, { x: () => xStart() }); // старт справа
-
-        // финальная позиция: центр последнего элемента = центр списка (при x:0)
-        const calcEndX = () => {
-          const listW = postsList.scrollWidth;
-          const listCenter = listW / 2;
-          const last = items[items.length - 1];
-          const lastCenter = last.offsetLeft + last.offsetWidth / 2; // в координатах списка
-          return -(lastCenter - listCenter);
-        };
-
-        const tlPosts = gsap.timeline({
-          scrollTrigger: {
-            trigger: scenePosts,
-            start: "top top",
-            end: "+=220%",
-            scrub: true,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        // один твинап: едем с xStart() до calcEndX()
-        tlPosts.to(
-          postsList,
-          {
-            x: calcEndX, // функция — пересчитается на refresh/resize
-            duration: 0.65,
-            ease: "none",
-          },
-          0
-        );
-
-        tlPosts.to(
-          title,
-          {
-            opacity: 0,
-            duration: 0.2,
-            ease: "none",
-          },
-          0.2
-        );
-      }
-    },
-
-    // мобильные/планшеты
-    "(max-width: 768px)": function () {
-      document.querySelectorAll(".scene-sevices").forEach((section) => {
-        const title = section.querySelector(".title");
-        const subtitle = section.querySelector(".subtitle");
-        const list = section.querySelector(".services-list");
-        const overlay = section.querySelector(".do-overlay");
-        if (!title || !subtitle || !list || !overlay) return;
-
-        // статичное положение заголовков
-        gsap.set(title, { y: -220, opacity: 1 });
-        gsap.set(subtitle, { y: -160, opacity: 1 });
-
-        // список остаётся на месте
-        gsap.set(list, { x: 0, y: 0, opacity: 1 });
-
-        // overlay стартует слева от списка
-        gsap.set(overlay, {
-          opacity: 1,
-          yPercent: -30,
-          y: -90,
-        });
-
-        // таймлайн без pin, overlay двигается вниз вместе со скроллом
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: list,
-            start: "top 80%",
-            end: "bottom top",
-            scrub: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        // overlay двигается сверху списка до низа списка
-        tl.fromTo(
-          overlay,
-          { y: -30 },
-          {
-            y: () => list.scrollHeight - overlay.offsetHeight - 50,
-            ease: "none",
-          }
-        );
-
-        // === Подсветка активного пункта по положению overlay ===
-        const items = Array.from(list.querySelectorAll("li"));
-        const inactive = "#9b9b9b";
-        gsap.set(items, { color: inactive });
-
-        function highlightClosest() {
-          const o = overlay.getBoundingClientRect();
-          const overlayCenterY = o.top + o.height / 2;
-
-          let bestIdx = -1;
-          let bestDist = Infinity;
-
-          items.forEach((li, i) => {
-            const r = li.getBoundingClientRect();
-            const liCenterY = r.top + r.height / 2;
-            const d = Math.abs(liCenterY - overlayCenterY);
-            if (d < bestDist) {
-              bestDist = d;
-              bestIdx = i;
-            }
-          });
-
-          items.forEach((li, i) => {
-            gsap.to(li, {
-              color: i === bestIdx ? "#000" : inactive,
-              duration: 0.2,
-              overwrite: "auto",
-            });
-          });
-        }
-
-        tl.eventCallback("onUpdate", highlightClosest);
-        highlightClosest();
-      });
-    },
-  });
-
-  // header color change on scroll
-  const header = document.querySelector(".header");
-  const intro = document.querySelector(".intro");
-  if (header && intro) {
-    ScrollTrigger.create({
-      trigger: intro,
-      start: "bottom top",
-      onEnter: () => header.classList.add("white"),
-      onLeaveBack: () => header.classList.remove("white"),
-    });
-  }
-
-  // footer animation
-  const footer = document.querySelector(".footer");
-  if (footer) {
-    const links = footer.querySelectorAll(
-      ".footer__link, .footer-body__link, .link"
-    );
-
-    gsap.set(links, { y: 30, opacity: 0 });
-
-    gsap.to(links, {
-      y: 0,
-      opacity: 1,
-      duration: 0.6,
-      ease: "power3.out",
-      stagger: { each: 0.1, from: "start" },
-      scrollTrigger: {
-        trigger: footer,
-        start: "top 90%", // футер почти заходит
-        toggleActions: "play none none reverse",
-      },
-    });
-  }
-
-  // footer logo animation
-  const footerLogo = document.querySelector(".footer-logo");
-
-  if (footerLogo) {
-    const letters = footerLogo.querySelectorAll(".footer-logo__letter svg");
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    // стартовое состояние
-    gsap.set(letters, { yPercent: 110 });
-
-    // таймлайн (пауза по умолчанию)
-    const tlLogo = gsap.timeline({ paused: true }).to(letters, {
-      yPercent: 0,
-      duration: prefersReduced ? 0 : 2,
-      ease: "power3.out",
-      stagger: { each: 0.1, from: "start" },
-    });
-
-    // ScrollTrigger управляет запуском/сбросом
-    ScrollTrigger.create({
-      trigger: footerLogo,
-      start: "top bottom", // блок вошёл в экран (снизу)
-      end: "bottom top", // блок полностью вышел (сверху)
-      onEnter: () => tlLogo.restart(),
-      onEnterBack: () => tlLogo.restart(),
-      onLeave: () => {
-        tlLogo.pause(0);
-        gsap.set(letters, { yPercent: 110 });
-      },
-      onLeaveBack: () => {
-        tlLogo.pause(0);
-        gsap.set(letters, { yPercent: 110 });
-      },
-      invalidateOnRefresh: true,
-    });
-  }
-
-  // если шрифты грузятся позже — пересчитать размеры
-  if (document.fonts?.ready) {
-    document.fonts.ready.then(() => ScrollTrigger.refresh());
-  }
-  window.addEventListener("resize", () => ScrollTrigger.refresh(), {
-    passive: true,
-  });
-
-  // project animation
-  const projectImgs = document.querySelectorAll(".project-hat__img");
-  if (projectImgs.length > 0) {
-    projectImgs.forEach((img) => {
-      const wrapper = img.closest(".project-hat__inner");
-      const scaleAmount = 1.1; // легкое увеличение
-      const movePercent = 50; // смещение по Y
-
-      // Создаем ScrollTrigger для параллакса
-      const st = gsap.fromTo(
-        img,
-        { yPercent: 0, scale: 1 },
-        {
-          yPercent: movePercent,
-          scale: scaleAmount,
-          ease: "none",
-          immediateRender: false,
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        }
-      );
-
-      // Сразу синхронизируем при загрузке страницы
-      window.addEventListener("load", () => {
-        ScrollTrigger.refresh();
-      });
-    });
-  }
-
-  // Параллакс для слайдера
-  const projectGalleries = document.querySelectorAll(
-    ".project-swiper-parallax"
-  );
-
-  if (projectGalleries.length > 0) {
-    projectGalleries.forEach((gallery) => {
-      gsap.fromTo(
-        gallery,
-        { yPercent: 0 },
-        {
-          yPercent: 20,
-          ease: "none",
-          scrollTrigger: {
-            trigger: gallery,
-            start: "top bottom", // когда верх галереи виден снизу
-            end: "bottom top", // когда галерея полностью ушла вверх
-            scrub: true, // плавная синхронизация с прокруткой
-            invalidateOnRefresh: true,
-          },
-        }
-      );
-    });
-
-    // пересчет ScrollTrigger после загрузки страницы
-    window.addEventListener("load", () => {
-      ScrollTrigger.refresh();
-    });
-  }
-
-  // preloader
-  const loader = document.querySelector(".loader");
-  if (loader) {
-    disableScroll();
-
-    const svgs = gsap.utils.toArray(".loader__inner svg");
-
-    // уважение reduce-motion
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    // стартовые состояния
-    gsap.set(svgs, { transformOrigin: "50% 50%", x: 0, y: 0 });
-
-    const tl = gsap.timeline({
-      repeat: 0,
-      yoyo: true,
-      defaults: { ease: "power2.inOut" },
-    });
-
-    if (!reduced) {
-      // Фаза 1: движение элементов одновременно
-      tl.to(
-        svgs[0],
-        {
-          keyframes: [
-            { x: 0, y: -54, duration: 0.6, ease: "power2.inOut" }, // для svgs[0]
-          ],
-        },
-        0.2
-      );
-
-      tl.to(
-        svgs[1],
-        {
-          keyframes: [
-            { x: 0, y: 54, duration: 0.6, ease: "power2.inOut" }, // для svgs[1]
-          ],
-        },
-        0.2
-      );
-
-      // Фаза 2: задержка на 1 секунду и затем движение элементов одновременно
-      tl.to(
-        svgs[0],
-        {
-          keyframes: [{ x: 105, y: -52, duration: 0.6, ease: "power2.inOut" }],
-        },
-        0.9
-      );
-
-      tl.to(
-        svgs[1],
-        {
-          keyframes: [{ x: -106, y: 52, duration: 0.6, ease: "power2.inOut" }],
-        },
-        0.9
-      );
-    }
-
-    // анимация скрытия лоадера с параллакс эффектом
-    function hideLoader() {
-      if (reduced) {
-        loader.classList.add("hidden");
-        return;
-      }
-
-      const tlHide = gsap.timeline({
-        onComplete: () => {
-          animateText();
-          enableScroll();
-          loader.classList.add("hidden");
-        },
-      });
-
-      // Параллакс эффект при скрытии
-      tlHide.to(loader, {
-        y: "-100vh", // двигаем лоадер вверх
-        duration: 1.5,
-        ease: "power3.out",
-      });
-
-      // Элементы внутри лоадера двигаются с разной скоростью
-      tlHide.to(svgs[0], { y: "80vh", duration: 1.5, ease: "power3.out" }, 0);
-      tlHide.to(svgs[1], { y: "88vh", duration: 1.5, ease: "power3.out" }, 0);
-    }
-
-    window.onload = function () {
-      setTimeout(hideLoader, 2000); // скрытие лоадера с задержкой 2000 мс
-    };
-  }
-
-  // Анимация для текста
-  function animateText() {
-    const animTexts = document.querySelectorAll(".animated-text");
-    if (animTexts.length) {
-      animTexts.forEach((item) => {
-        const text = item.innerHTML.split("<br>");
-        item.innerHTML = "";
-
-        text.forEach((line, i) => {
-          const wrapper = document.createElement("div");
-          wrapper.classList.add("line-wrapper");
-
-          const span = document.createElement("span");
-          span.classList.add("line");
-          span.style.animationDelay = `${i * 0.3}s`;
-          span.innerHTML = line.trim();
-
-          wrapper.appendChild(span);
-          item.appendChild(wrapper);
-        });
-
-        item.style.visibility = "visible";
-      });
-    }
-  }
-});
-
 const customSelects = document.querySelectorAll(".custom-select");
 if (customSelects.length > 0) {
   customSelects.forEach((select) => {
@@ -8163,14 +8615,22 @@ if (customSelects.length > 0) {
     const arrow = select.querySelector(".arrow");
 
     // Открытие/закрытие dropdown с анимацией
-    selectBox.addEventListener("click", () => {
-      customSelects.forEach((select) => {
-        select.querySelector(".select-options").classList.remove("open");
-        select.querySelector(".arrow").classList.remove("open");
+    selectBox.addEventListener("click", (e) => {
+      e.stopPropagation(); // чтобы не сработал document click
+
+      const isOpen = selectOptions.classList.contains("open");
+
+      // Закрываем все селекты
+      customSelects.forEach((s) => {
+        s.querySelector(".select-options").classList.remove("open");
+        s.querySelector(".arrow").classList.remove("open");
       });
 
-      selectOptions.classList.toggle("open");
-      arrow.classList.toggle("open");
+      // Переключаем текущий: если был закрыт — откроем, если был открыт — закроем
+      if (!isOpen) {
+        selectOptions.classList.add("open");
+        arrow.classList.add("open");
+      }
     });
 
     // Выбор элемента из списка
@@ -8178,15 +8638,14 @@ if (customSelects.length > 0) {
       option.addEventListener("click", () => {
         selectedOption.textContent = option.textContent;
         selectOptions.classList.remove("open");
+        arrow.classList.remove("open");
       });
     });
 
     // Закрытие всех dropdown, если клик был вне селекта
-    document.addEventListener("click", (event) => {
-      if (!event.target.closest(".custom-select")) {
-        selectOptions.classList.remove("open");
-        arrow.classList.remove("open");
-      }
+    document.addEventListener("click", () => {
+      selectOptions.classList.remove("open");
+      arrow.classList.remove("open");
     });
   });
 }
@@ -8218,3 +8677,39 @@ function animateText() {
 }
 
 animateText();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("page-overlay");
+  const fadeDuration = 1000; // должен совпадать с CSS
+
+  // fade-out при загрузке страницы
+  window.addEventListener("load", () => {
+    overlay.style.opacity = "0";
+    setTimeout(() => {
+      overlay.style.display = "none";
+    }, fadeDuration);
+  });
+
+  // fade-in при клике на ссылки
+  const links = document.querySelectorAll("a.fade-link");
+  links.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const url = link.href;
+
+      // overlay всегда display:block при переходе
+      overlay.style.display = "block";
+      overlay.style.pointerEvents = "all";
+
+      // небольшая задержка чтобы браузер отрисовал overlay
+      requestAnimationFrame(() => {
+        overlay.style.opacity = "1";
+
+        // после завершения анимации переходим
+        setTimeout(() => {
+          window.location.href = url;
+        }, fadeDuration);
+      });
+    });
+  });
+});

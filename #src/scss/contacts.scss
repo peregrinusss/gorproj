@@ -59,7 +59,7 @@
       font-weight: 300;
       color: $gray;
 
-      @media (max-width: $bp2) {
+      @media (max-width: $bp1) {
         font-size: 16px;
       }
     }
@@ -71,7 +71,7 @@
       line-height: 120%;
       color: $black;
 
-      @media (max-width: $bp2) {
+      @media (max-width: $bp1) {
         font-size: 16px;
       }
     }

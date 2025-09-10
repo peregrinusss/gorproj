@@ -3,6 +3,7 @@
   @@include('_head.html', { "title": "Проекты" })
 
   <body>
+    <div id="page-overlay"></div>
     <div class="wrap">
       <!--header-->
       @@include('_header.html', { "color": "white" })
@@ -163,7 +164,9 @@
                 </div>
               </a>
             </div>
-            <div class="link anim-fade"><span>[</span>Загружаются...<span>]</span></div>
+            <div class="link anim-fade">
+              <span>[</span>Загружаются...<span>]</span>
+            </div>
           </div>
         </div>
       </main>
