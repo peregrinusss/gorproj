@@ -245,13 +245,14 @@ document.addEventListener("DOMContentLoaded", () => {
         gsap.set(subtitle, { x: () => window.innerWidth * 0.5, opacity: 0 });
         gsap.set(overlay, {
           opacity: 0,
-          x: -overlay.offsetWidth * 3,
+          x: -overlay.offsetWidth * 2.3,
           yPercent: -50,
         });
 
         // список стартует чуть сбоку и ниже центра
         gsap.set(list, {
-          x: () => list.offsetWidth * 0.2, // вправо на 20% ширины самого списка
+          // x: () => list.offsetWidth * 0.2, // вправо на 20% ширины самого списка
+          x: 134,
           y: () => list.offsetHeight * 0.45, // вниз на половину его высоты
           opacity: 0,
         });
@@ -271,7 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Фаза 1: подзаголовок въезжает справа → в центр
         tl.to(
           subtitle,
-          // { x: () => window.innerWidth * 0.5, opacity: 0 },
           {
             x: 0,
             opacity: 1,
@@ -285,7 +285,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Фаза 2: заголовок уезжает влево до inset и масштабируется
         tl.to(
           title,
-          // { x: 0, scale: 1, transformOrigin: "50% 50%" },
           {
             x: titleTargetX,
             scale: 0.4,
@@ -300,27 +299,22 @@ document.addEventListener("DOMContentLoaded", () => {
         tl.to(
           subtitle,
           {
-            y: -list.offsetHeight * 1.1,
-            opacity: 0.6,
+            y: () => -subtitle.offsetHeight * 1.8,
+            opacity: 0.4,
             duration: 0.3,
             ease: "power2.out",
           },
-          0.7
+          0.8
         );
 
         // Фаза 4: список и overlay появляются
         tl.to(
           list,
-          // {
-          //   y: () => list.offsetHeight * 0.45,
-          //   opacity: 0,
-          // },
           { opacity: 1, duration: 0.6, ease: "none", immediateRender: false },
           0.9
         );
         tl.to(
           overlay,
-          // { opacity: 0, x: () => -overlay.offsetWidth * 3, yPercent: -50 },
           {
             opacity: 1,
             duration: 0.6,
@@ -330,10 +324,22 @@ document.addEventListener("DOMContentLoaded", () => {
           0.9
         );
 
+        tl.to(
+          overlay,
+          { y: () => list.offsetHeight * 0.288, duration: 2.0, ease: "none" },
+          1.2
+        );
+
         // Фаза 5: список едет вверх
         tl.to(
           list,
-          { y: () => -list.offsetHeight * 0.45, duration: 2.0, ease: "none" },
+          { y: () => -list.offsetHeight * 0.15, duration: 2.0, ease: "none" },
+          1.2
+        );
+
+        tl.to(
+          subtitle,
+          { y: () => -list.offsetHeight * 0.9, duration: 2.0, ease: "none" },
           1.2
         );
 
@@ -468,7 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!sceneInner) return;
 
         // Начинаем блок сверху (на 100% выше)
-        gsap.set(sceneInner, { yPercent: -120 });
+        gsap.set(sceneInner, { yPercent: -50 });
 
         gsap.utils.toArray(".scene-about__text p").forEach((p) => {
           ScrollTrigger.create({
@@ -493,7 +499,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
           })
           .to(sceneInner, {
-            yPercent: 120, // плывем до исходного положения
+            yPercent: 50, // плывем до исходного положения
             ease: "none",
           });
       }
@@ -1497,7 +1503,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   //open error modal
-  function openErrorModal(title, btnText) {
+  window.openErrorModal = function (title, btnText) {
     errorModal.querySelector("h3").textContent = title
       ? title
       : "Что-то пошло не так, попробуйте еще раз";
@@ -1513,7 +1519,7 @@ document.addEventListener("DOMContentLoaded", () => {
       activeModal.classList.remove("open");
     }
     errorModal.classList.add("open");
-  }
+  };
 
   //open modal
   function openModal(modal) {

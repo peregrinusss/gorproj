@@ -3619,7 +3619,7 @@ input[type=search]::-webkit-search-results-decoration {
   overflow: hidden;
 }
 
-.scene-advantages .scene-advantages .title {
+.scene-advantages .title {
   color: #FFFFFF;
 }
 
@@ -4841,6 +4841,7 @@ input[type=search]::-webkit-search-results-decoration {
   -ms-flex-direction: column;
   flex-direction: column;
   gap: 2px;
+  padding-right: 10px;
 }
 
 .project .ac-user__name {
