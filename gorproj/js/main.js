@@ -456,16 +456,25 @@ document.addEventListener("DOMContentLoaded", () => {
           },
         });
 
-        // один твинап: едем с xStart() до calcEndX()
-        tlPosts.to(
-          postsList,
-          {
-            x: calcEndX, // функция — пересчитается на refresh/resize
-            duration: 0.65,
-            ease: "none",
-          },
-          0
-        );
+        tlPosts
+          .to(
+            postsList,
+            {
+              x: calcEndX, // функция — пересчитается на refresh/resize
+              duration: 0.65,
+              ease: "none",
+            },
+            "<"
+          )
+          .to(
+            title,
+            {
+              opacity: 0.0,
+              duration: 0.1,
+              ease: "power2.out",
+            },
+            0.2
+          );
       }
 
       const sceneAbout = document.querySelector(".scene-about");
