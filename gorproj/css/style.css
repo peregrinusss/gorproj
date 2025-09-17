@@ -1886,21 +1886,28 @@ input[type=search]::-webkit-search-results-decoration {
 }
 
 .map-marker {
-  width: 106px;
-  height: 106px;
+  width: 90px;
+  height: 90px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: end;
-  -ms-flex-align: end;
-  align-items: flex-end;
-  /* чтобы "ножка" маркера была внизу */
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: absolute;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .map-marker img.map-icon {
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   -o-object-fit: contain;
@@ -3986,7 +3993,6 @@ input[type=search]::-webkit-search-results-decoration {
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   z-index: 10;
-  background-color: #FFFFFF;
 }
 
 .posts__track {
@@ -4001,8 +4007,8 @@ input[type=search]::-webkit-search-results-decoration {
   position: relative;
 }
 
-.posts-item:hover .posts-item__body {
-  opacity: 0.6;
+.posts-item:hover .posts-item__img img {
+  scale: 1.1;
 }
 
 .posts-item-more {
@@ -4060,6 +4066,7 @@ input[type=search]::-webkit-search-results-decoration {
   height: 19vw;
   max-width: 500px;
   max-height: 380px;
+  overflow: hidden;
 }
 
 .posts-item__img img {
@@ -4067,6 +4074,8 @@ input[type=search]::-webkit-search-results-decoration {
   height: 100%;
   -o-object-fit: cover;
   object-fit: cover;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
 }
 
 .posts-item__text {
