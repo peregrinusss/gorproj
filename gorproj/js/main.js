@@ -8620,50 +8620,80 @@ if (banner) {
   });
 }
 
-const customSelects = document.querySelectorAll(".custom-select");
-if (customSelects.length > 0) {
-  customSelects.forEach((select) => {
-    const selectBox = select.querySelector(".select-box");
-    const selectOptions = select.querySelector(".select-options");
-    const selectedOption = select.querySelector(".selected-option");
-    const options = select.querySelectorAll(".option");
-    const arrow = select.querySelector(".arrow");
+const customSelectWraps = document.querySelectorAll(".custom-select-wrap");
 
-    // Открытие/закрытие dropdown с анимацией
-    selectBox.addEventListener("click", (e) => {
-      e.stopPropagation(); // чтобы не сработал document click
+customSelectWraps.forEach((wrap) => {
+  const select = wrap.querySelector(".custom-select");
+  const selectBox = select.querySelector(".select-box");
+  const selectOptions = select.querySelector(".select-options");
+  const selectedOption = select.querySelector(".selected-option");
+  const options = select.querySelectorAll(".option");
+  const arrow = select.querySelector(".arrow");
+  const clearBtn = wrap.querySelector(".custom-select__clear");
 
-      const isOpen = selectOptions.classList.contains("open");
+  // Запоминаем начальную метку (сброс к ней)
+  const defaultLabel = selectedOption.textContent.trim();
 
-      // Закрываем все селекты
-      customSelects.forEach((s) => {
-        s.querySelector(".select-options").classList.remove("open");
-        s.querySelector(".arrow").classList.remove("open");
+  // Обновление видимости кнопки очистки
+  const updateClearVisibility = () => {
+    const current = selectedOption.textContent.trim();
+    if (current !== defaultLabel) {
+      clearBtn.classList.add("show");
+    } else {
+      clearBtn.classList.remove("show");
+    }
+  };
+
+  // Открыть/закрыть выпадашку
+  selectBox.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = selectOptions.classList.contains("open");
+
+    // закрыть другие селекты
+    document
+      .querySelectorAll(".custom-select .select-options.open")
+      .forEach((list) => {
+        list.classList.remove("open");
       });
-
-      // Переключаем текущий: если был закрыт — откроем, если был открыт — закроем
-      if (!isOpen) {
-        selectOptions.classList.add("open");
-        arrow.classList.add("open");
-      }
+    document.querySelectorAll(".custom-select .arrow.open").forEach((a) => {
+      a.classList.remove("open");
     });
 
-    // Выбор элемента из списка
-    options.forEach((option) => {
-      option.addEventListener("click", () => {
-        selectedOption.textContent = option.textContent;
-        selectOptions.classList.remove("open");
-        arrow.classList.remove("open");
-      });
-    });
+    if (!isOpen) {
+      selectOptions.classList.add("open");
+      arrow.classList.add("open");
+    }
+  });
 
-    // Закрытие всех dropdown, если клик был вне селекта
-    document.addEventListener("click", () => {
+  // Выбор пункта
+  options.forEach((option) => {
+    option.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selectedOption.textContent = option.textContent;
       selectOptions.classList.remove("open");
       arrow.classList.remove("open");
+      updateClearVisibility();
     });
   });
-}
+
+  // Очистка выбора
+  clearBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    selectedOption.textContent = defaultLabel; // сброс
+    selectOptions.classList.remove("open");
+    arrow.classList.remove("open");
+    updateClearVisibility(); // скроет кнопку
+  });
+
+  // Клик вне — закрыть
+  document.addEventListener("click", () => {
+    selectOptions.classList.remove("open");
+    arrow.classList.remove("open");
+  });
+
+  // Изначально скрыть кнопку (на всякий случай)
+  updateClearVisibility();
+});
 
 // Анимация для текста
 function animateText() {
